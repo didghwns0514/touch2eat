@@ -1,7 +1,7 @@
 {
   "engines": {
     "node": "v14.15.5",
-    "npm":"6.14.11"
+    "npm": "6.14.11"
   },
   "name": "touch2eat",
   "version": "1.0.0",
@@ -9,7 +9,7 @@
   "main": "app.js",
   "scripts": {
     "test": "runtouch2eat",
-    "start":"node app.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/didghwns0514/touch2eat#readme",
   "dependencies": {
+    "ejs": "^3.1.6",
     "express": "^4.17.1"
   }
 }
