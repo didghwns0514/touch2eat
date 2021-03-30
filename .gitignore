@@ -3,7 +3,11 @@
 #folders
 ########
 node_modules/
+.vscode/
 
 #file
+########
 *.ppk
 *.pem
+*.env.dev
+*.env

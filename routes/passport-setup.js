@@ -1,4 +1,16 @@
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const dotenv = require('dotenv');
+const path = require('path');
+
+dotenv.config({
+  path:path.resolve(
+    process.cwd(),
+    process.env.HEROKU === "true" ? ".env" : ".env.dev"
+  )
+});
+
+const HIDDEN_clientID = process.env.HIDDEN_clientID;
+const HIDDEN_clientSecret =  process.env.HIDDEN_clientSecret;
 
 // Use the GoogleStrategy within Passport.
 //   Strategies in passport require a `verify` function, which accept
@@ -19,8 +31,8 @@ module.exports = function(passport){
   });
 
   passport.use(new GoogleStrategy({
-      clientID : '682038719555-kf6bmesfs3n58n4f0ne3violb5802g52.apps.googleusercontent.com',
-      clientSecret: 'PzMMEHGWD9_3yVGxk0LIKg5O',
+      clientID : HIDDEN_clientID,
+      clientSecret: HIDDEN_clientSecret,
       //callbackURL : "http://localhost:10040/login/google/callback"
       callbackURL: "https://touch2eat.herokuapp.com/login/google/callback"
     },

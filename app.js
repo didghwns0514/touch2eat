@@ -8,6 +8,7 @@ setInterval(function(){
   https.get("https://touch2eat.herokuapp.com/");
 }, 600000); // every 10 minutes
 
+
 const express = require("express");
 const app = express();
 
@@ -19,6 +20,8 @@ app.set("port", PORT);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.engine("html", require('ejs').renderFile);
+
+app.use('/src', express.static(__dirname + "/src"));
 
 // google auth
 const session = require('express-session');
