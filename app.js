@@ -1,26 +1,61 @@
 /*jslint node: true */
 "use strict";
 
-// wake up module
-const http = require("http");
+
+// wake up module for heroku
+const https = require("https");
 setInterval(function(){
-  http.get("http://touch2eat.herokuapp.com");
-}, 600000); // every 10
+  https.get("https://touch2eat.herokuapp.com/");
+}, 600000); // every 10 minutes
 
 const express = require("express");
-const PORT = process.env.PORT; // heroku port
-
-
 const app = express();
 
-const port = 10040;
+const loc_PORT = 10040; // local debug port
+const PORT = process.env.PORT || loc_PORT; // heroku port
 
-app.set("port", port);
+// App setters
+app.set("port", PORT);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.engine("html", require('ejs').renderFile);
 
-app.get("/", (req, res) => {
-  res.send("Hello world!");
-});
+// google auth
+const session = require('express-session');
+const passport = require('passport');
+//const GoogleStrategy = require('passport-google-oauth20').Strategy;
+require('./routes/passport-setup')(passport);
 
-app.listen(PORT, () => console.log("Listening on", PORT));
+app.use(session({ secret: 'SECRET_CODE', 
+                  cookie: { maxAge: 60 * 60 * 1000 },
+                  resave: true, 
+                  saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+// routers
+// add like middlewares that are routers
+// to handle endpoints
+const homepage = require("./routes/homepage");
+//app.use("/homepage", homepage);
+app.get('/', (req, res)=>{
+  res.send("you are at the init page")
+})
+app.use("/homepage", homepage);
+const login = require("./routes/login");
+app.use("/login", login(app, passport));
+const map = require("./routes/map");
+app.use("/map", map);
+
+
+
+app.listen(PORT, err => {
+  console.log("Listening on", PORT);
+  if(err){
+      return console.log("ERROR", err);
+    }
+  }
+  );
 
 module.exports = app;
