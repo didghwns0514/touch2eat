@@ -8,25 +8,27 @@ setInterval(function(){
   https.get("https://touch2eat.herokuapp.com/");
 }, 600000); // every 10 minutes
 
-
+// start express
 const express = require("express");
 const app = express();
 
+// configure port number
 const loc_PORT = 10040; // local debug port
 const PORT = process.env.PORT || loc_PORT; // heroku port
 
 // App setters
 app.set("port", PORT);
-app.set('views', __dirname + '/views');
+
 app.set('view engine', 'ejs');
 app.engine("html", require('ejs').renderFile);
 
+// set file locations
+app.set('views', __dirname + '/views');
 app.use('/src', express.static(__dirname + "/src"));
 
 // google auth
 const session = require('express-session');
 const passport = require('passport');
-//const GoogleStrategy = require('passport-google-oauth20').Strategy;
 require('./routes/passport-setup')(passport);
 
 app.use(session({ secret: 'SECRET_CODE', 
@@ -42,8 +44,9 @@ app.use(passport.session());
 // to handle endpoints
 const homepage = require("./routes/homepage");
 //app.use("/homepage", homepage);
-app.get('/', (req, res)=>{
-  res.send("you are at the init page")
+app.get('/{1}', (req, res)=>{
+  //res.send("you are at the init page")
+  res.redirect('/homepage')
 })
 app.use("/homepage", homepage);
 const login = require("./routes/login");
@@ -52,7 +55,7 @@ const map = require("./routes/map");
 app.use("/map", map);
 
 
-
+// check live server by console log
 app.listen(PORT, err => {
   console.log("Listening on", PORT);
   if(err){

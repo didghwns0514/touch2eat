@@ -9,7 +9,7 @@ const authenticateUser = (req, res, next) => {
     next();
   } else {
     console.log('fail-redirected-1')
-    res.status(301).redirect('/homepage');
+    return res.render('wait.html',{info_disp: "You are not an authenticaed user, please retry logging in...", redirect:"/homepage"});
   }
 };
 
@@ -19,12 +19,16 @@ module.exports = function(app, passport) {
   const express = require("express");
   const router = express.Router();
 
+  router.use(function(req, res, next){
+    console.log("Router - login : ",req.url, "@", Date.now());
+    next();
+  });
 
   router
     .route('/')
     .get((req, res, next) => {
       console.log('r-1');
-      res.send("you are at login page");
+      res.redirect('/login/google')
     });
 
   router
@@ -38,25 +42,20 @@ module.exports = function(app, passport) {
       failureRedirect: '/login/fail/',
       successRedirect: '/login/success/'})
     );
-    // .get(
-    //     passport.authenticate('google', {
-    //     failureRedirect: '/login/fail/',
-    //     successRedirect: '/login/success/'})
-    //   );
 
 
   router
     .route('/fail')
     .get((req, res, next)=>{
-      console.log('r-2');
-      res.send("login fail");
+
+      return res.render('wait.html',{info_disp: "You have failed to log in...", redirect:"/homepage"});
     });
 
   router
     .route('/success')
     .get( authenticateUser, (req, res, next)=>{
-      console.log('r-3');
-      res.send(`Welcome user ${req.user.displayName}!`);
+
+      return res.render('wait.html', {info_disp: `Welcome user ${req.user.displayName}!!`, redirect:"/homepage"});
     });
 
   router

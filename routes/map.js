@@ -11,7 +11,7 @@ dotenv.config({
   });
   
 const GOOGLE_MAP_KEY = process.env.GOOGLE_MAP_KEY;
-
+//console.log('GOOGLE_MAP_KEY in serverside : ', GOOGLE_MAP_KEY)
 
 const express = require("express");
 let router = express.Router();
@@ -23,7 +23,7 @@ router.use(function(req, res, next){
 
 router
     .get('/',(req, res, next)=>{
-        return res.render('map.html',{google_map_key:GOOGLE_MAP_KEY});
+        return res.render('map.html',{googlemapkey:GOOGLE_MAP_KEY});
     });
 
 module.exports = router;
