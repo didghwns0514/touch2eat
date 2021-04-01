@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        body {
+        /* body {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,19 +17,74 @@
             width: 80vw;
             height: 80vh;
         }       
-        .console{
-            heigth: 100px;
+        
+        #console{
+            heigth: 10vh;
+            width: 100px;
+            background-color: aqua;
+        } */
+
+        /* Split the screen in half */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 98vh;
         }
+        .split {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        /* z-index: 1; */
+        top: 0;
+        overflow-x: hidden;
+        padding-top: 20px;
+        }
+
+        /* Control the left side */
+        .up {
+        /* left: 0; */
+        top: 0%;
+        background-color: #111;
+        }
+
+        /* Control the right side */
+        .down {
+        /* right: 0; */
+        top: 10%;
+        background-color: red;
+        }
+
+        /* If you want the content centered horizontally and vertically */
+        .centered {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        }
+        #map {
+            border: 2px solid #333;
+            width: 100vw;
+            height: 90vh;
+        }       
     </style>
     
 </head>
 <body>
 
-    <div id="console">
+    <!-- <div id="console">
         <button id="nowbutton">Current Location</button>
     </div>
     
-    <div id="map"></div>
+    <div id="map"></div> -->
+
+    <div class="split up">
+          <button id="nowbutton">Current Location</button>
+    </div>
+      
+    <div class="split down" class="centered">
+        <div id="map"></div>
+    </div>
     
     <!-- <script src="/src/map_key_gen.js"></script> -->
     <!--<script src='https://code.jquery.com/jquery-3.4.1.min.js'></script> -->
