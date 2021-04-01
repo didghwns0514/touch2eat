@@ -1,14 +1,18 @@
 const tmp_G = document.getElementById("needme");
 const GOOGLE_MAP_KEY = tmp_G.getAttribute("gk");
+const defaultZoom = 16;
+let queryQueue = [];
 
 let app = {
     map: null,
     currentMarker: null,
+    currentInfoWindw : null,
     defaultPos: {
       coords: {
         latitude: 45.555,
         longitude: -75.555
-      }
+      },
+    currLoc: null,
     }, //default location to use if geolocation fails
     // init: function() {
     //   document.addEventListener("deviceready", app.ready);
@@ -21,8 +25,12 @@ let app = {
         
       let locationButton = document.getElementById("nowbutton");
       locationButton.addEventListener("click", app.mapScriptReady);
+      
+      let searchbutton = document.getElementById("nowsearchbutton");
+      console.log("searchbutton : ", searchbutton);
+      searchbutton.addEventListener("click", app.runSearchRequest);
 
-      s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_KEY}`;
+      s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_KEY}&libraries=places`;
     },
     mapScriptReady: function() {
       //script has loaded. Now get the location
@@ -37,17 +45,24 @@ let app = {
           app.failPosition,
           options
         );
+        
       } else {
         //not supported
         //pass default location to gotPosition
         app.gotPosition(app.defaultPos);
+        // app.currLoc = app.defaultPos.coords;
       }
     },
     gotPosition: function(position) {
       console.log("gotPosition", position.coords);
+      app.currLoc = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      };
       //build the map - we have deviceready, google script, and geolocation coords
       app.map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 16,
+        zoom: defaultZoom,
+        // zoom: 16,
         center: {
           lat: position.coords.latitude,
           lng: position.coords.longitude
@@ -83,6 +98,140 @@ let app = {
       //add map event listeners
       app.addMapListeners();
     },
+
+    runSearchRequest : function(){
+        console.log("runSearchRequest");
+        queryQueue = []; // reset query results object container
+        let searchQuery = document.getElementById("nowsearchtext").value;
+        console.log('searchQuery value : ', searchQuery);
+
+        // let request = {
+        //     query : searchQuery,
+        //     fields: ['formatted_address', 'name', 'rating','user_ratings_total', 'opening_hours', 'geometry'],
+        //     radius:1000,
+        // };
+        // let request ={
+        //     location: new google.maps.LatLng(app.currLoc.latitude, app.currLoc.longitude),
+        //     zoom: defaultZoom,
+        //     radius :1000,
+        //     types:[searchQuery]
+        // };
+
+      let request ={
+            location: new google.maps.LatLng(app.currLoc.latitude, app.currLoc.longitude),
+            zoom: defaultZoom,
+            radius :1000,
+            query:searchQuery
+        };
+
+        let service = new google.maps.places.PlacesService(app.map);
+        service.textSearch(request, (results, status) =>{
+        //service.findPlaceFromQuery(request, (results, status) =>{
+        //service.nearbySearch(request, (results, status) =>{
+            if (status === google.maps.places.PlacesServiceStatus.OK){
+                console.group('query result group');
+                console.log('results retrieved : ', results);
+                //queryQueue = results;
+                for(var i =0; i<results.length; i++){
+                    let place = results[i];
+                    console.log(i+1, results[i]);
+                    app.addPlaceMarker(place);
+
+                    queryQueue.push(place);
+
+                    //createMarker(results[i]);
+                }
+                console.groupEnd();
+            };
+        });
+
+    },
+
+    addPlaceMarker: function(result){
+        console.log("addPlaceMarker");
+        let place_marker = new google.maps.Marker({
+            map:app.map,
+            draggable:false,
+            position: {
+                lat: result.geometry.location.lat(),
+                lng: result.geometry.location.lng()
+            },
+            title:result.name
+        });
+
+        place_marker.addListener("click", app.addPlaceMarkerClick);
+    },
+
+    addPlaceMarkerClick : function(ev){
+        console.log("addPlaceMarkerClick", ev);
+        console.log(this);
+        if(app.currentMarker === null){
+            let marker = this; // to use the marker locally
+            app.currentMarker = marker; //to use the marker globally
+            app.map.panTo(marker.getPosition());
+            
+            // float information
+            app.loadPlaceMarkerInfo();
+
+        }else{
+            //curr marker already exists, remove all
+            //let marker = this; //to use the marker locally
+            //marker.setMap(null); // erase from map
+            app.currentMarker = null;
+            app.loadPlaceMarkerInfo();
+        }
+    },
+    loadPlaceMarkerInfo : function(){
+        console.log("loadPlaceMarkerInfo");
+
+        if(app.currentMarker !== null){
+            console.log("loadPlaceMarkerInfo - create");
+            // search in the object
+            let queryResult = null;
+            console.group("For Search in queue");
+            console.log("current marker title : ", app.currentMarker.title);
+            console.log("queryQueue inside : ", queryQueue);
+            for(var i=0; i< queryQueue.length; i++){
+                console.log(i+1, queryQueue[i]);
+                if( queryQueue[i].name === app.currentMarker.title ){
+                    queryResult = queryQueue[i];
+                    break;
+                }
+            }
+            console.groupEnd();
+
+            //set display text
+            let dispText = '';
+            if(queryResult === null){
+                dispText += '<h1>no information...</h1>';
+            }else{
+                let openhourText =  'opening_hours' in queryResult ? `${queryResult.opening_hours.isOpen()}` : 'no open hour info';
+                dispText += `<h1>${queryResult.name}</h1>
+                            <p>rating : ${queryResult.rating}</p>
+                            <p>total review number : ${queryResult.user_ratings_total}</p>
+                            <p>is open now : ${openhourText}</p>
+                            <p>address : ${queryResult.formatted_address}</p>
+                `;
+            }
+
+            app.currentInfoWindw = new google.maps.InfoWindow({
+                content:dispText,
+                maxWidth: 200,
+            });
+            app.currentInfoWindw.open(app.map, app.currentMarker);
+
+        }else{
+            console.log("loadPlaceMarkerInfo - exist checked");
+            if(app.currentInfoWindw !== null){
+                console.log("loadPlaceMarkerInfo - destroy");
+                app.currentInfoWindw.close();
+                app.currentInfoWindw = null;
+            }else{
+                console.log("loadPlaceMarkerInfo - null");
+            }
+        }
+    },
+
     addMapListeners: function() {
       console.log("addMapListeners");
       //add double click listener to the map object
