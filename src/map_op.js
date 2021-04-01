@@ -2,6 +2,8 @@ const tmp_G = document.getElementById("needme");
 const GOOGLE_MAP_KEY = tmp_G.getAttribute("gk");
 const defaultZoom = 16;
 let queryQueue = [];
+let markerQueue = [];
+
 
 let app = {
     map: null,
@@ -53,6 +55,14 @@ let app = {
         // app.currLoc = app.defaultPos.coords;
       }
     },
+    markerQueueClear: function() {
+        console.log("markerQueueClear is called!");
+        // eraise markers
+        for(var i=0; i<markerQueue.length;i++){
+            markerQueue[i].setMap(null);
+        }
+        markerQueue = []; // reset marker container
+    },
     gotPosition: function(position) {
       console.log("gotPosition", position.coords);
       app.currLoc = {
@@ -102,6 +112,10 @@ let app = {
     runSearchRequest : function(){
         console.log("runSearchRequest");
         queryQueue = []; // reset query results object container
+
+        //clear marker queue
+        app.markerQueueClear();
+
         let searchQuery = document.getElementById("nowsearchtext").value;
         console.log('searchQuery value : ', searchQuery);
 
@@ -132,17 +146,21 @@ let app = {
                 console.group('query result group');
                 console.log('results retrieved : ', results);
                 //queryQueue = results;
+                
                 for(var i =0; i<results.length; i++){
                     let place = results[i];
                     console.log(i+1, results[i]);
-                    app.addPlaceMarker(place);
+                    
 
                     queryQueue.push(place);
+                    markerQueue.push(app.addPlaceMarker(place));
 
                     //createMarker(results[i]);
                 }
                 console.groupEnd();
-            };
+
+
+            }
         });
 
     },
@@ -150,6 +168,7 @@ let app = {
     addPlaceMarker: function(result){
         console.log("addPlaceMarker");
         let place_marker = new google.maps.Marker({
+        //let place_marker = new google.maps.Marker({
             map:app.map,
             draggable:false,
             position: {
@@ -160,6 +179,8 @@ let app = {
         });
 
         place_marker.addListener("click", app.addPlaceMarkerClick);
+
+        return place_marker;
     },
 
     addPlaceMarkerClick : function(ev){
