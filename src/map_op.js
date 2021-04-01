@@ -56,7 +56,8 @@ let app = {
         minZoom: 10,
         maxZoom: 17,
         disableDoubleClickZoom: true,
-        clickableIcons: false,
+        gestureHandling: "greedy", // disable two fingers
+        clickableIcons: true,
         disableDefaultUI: true,
         zoomControl: true,
         zoomControlOptions: {
