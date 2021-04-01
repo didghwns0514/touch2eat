@@ -39,7 +39,7 @@ let app = {
       if (navigator.geolocation) {
         let options = {
           enableHighAccuracy: true,
-          timeout: 20000,
+          timeout: 2000, //2secs
           maximumAge: 1000
         };
         navigator.geolocation.getCurrentPosition(
