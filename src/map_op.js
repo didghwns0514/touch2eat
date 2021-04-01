@@ -9,12 +9,13 @@ let app = {
     map: null,
     currentMarker: null,
     currentInfoWindw : null,
+    currLoc: null,
     defaultPos: {
       coords: {
         latitude: 45.555,
         longitude: -75.555
       },
-    currLoc: null,
+    
     }, //default location to use if geolocation fails
     // init: function() {
     //   document.addEventListener("deviceready", app.ready);
@@ -63,6 +64,19 @@ let app = {
         }
         markerQueue = []; // reset marker container
     },
+    
+    getCurrentMapCenter: function() {
+       google.maps.event.addListener(app.map, "center_changed", function() { 
+       let center = this.getCenter(); 
+       let latitude = center.lat(); 
+       let longitude = center.lng(); 
+       console.log("current latitude is: " + latitude); 
+       console.log("current longitude is: " + longitude);
+
+       
+       });
+
+    },  
     gotPosition: function(position) {
       console.log("gotPosition", position.coords);
       app.currLoc = {
