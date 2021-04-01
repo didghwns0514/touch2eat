@@ -3,7 +3,7 @@ const GOOGLE_MAP_KEY = tmp_G.getAttribute("gk");
 const defaultZoom = 16;
 let queryQueue = [];
 let markerQueue = [];
-
+let firstPosSmph = false;
 
 let app = {
     map: null,
@@ -40,7 +40,7 @@ let app = {
         let options = {
           enableHighAccuracy: true,
           timeout: 20000,
-          maximumAge: 1000 * 60 * 60
+          maximumAge: 1000
         };
         navigator.geolocation.getCurrentPosition(
           app.gotPosition,
