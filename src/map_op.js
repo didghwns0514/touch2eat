@@ -10,16 +10,13 @@ let app = {
     currentMarker: null,
     currentInfoWindw : null,
     currLoc: null,
-    defaultPos: {
+    currMapCenter: {latitude:null, longitude:null},
+    defaultPos: { //default location to use if geolocation fails
       coords: {
         latitude: 45.555,
         longitude: -75.555
       },
-    
-    }, //default location to use if geolocation fails
-    // init: function() {
-    //   document.addEventListener("deviceready", app.ready);
-    // },
+    }, 
     init: function() {
       //load the google map script
       let s = document.createElement("script");
@@ -35,6 +32,7 @@ let app = {
 
       s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_KEY}&libraries=places`;
     },
+
     mapScriptReady: function() {
       //script has loaded. Now get the location
       if (navigator.geolocation) {
@@ -65,18 +63,6 @@ let app = {
         markerQueue = []; // reset marker container
     },
     
-    getCurrentMapCenter: function() {
-       google.maps.event.addListener(app.map, "center_changed", function() { 
-       let center = this.getCenter(); 
-       let latitude = center.lat(); 
-       let longitude = center.lng(); 
-       console.log("current latitude is: " + latitude); 
-       console.log("current longitude is: " + longitude);
-
-       
-       });
-
-    },  
     gotPosition: function(position) {
       console.log("gotPosition", position.coords);
       app.currLoc = {
@@ -121,6 +107,26 @@ let app = {
     });
       //add map event listeners
       app.addMapListeners();
+      app.getMapCenter();
+    },
+
+    getMapCenter : function(){
+        google.maps.event.addListener(app.map, "center_changed", app.MapCenterSub);
+
+    },
+    MapCenterSub : function(){
+        
+            console.log("getMapCenter");
+            let center = this.getCenter();
+            let latitude = center.lat();
+            let longitude = center.lng();
+            
+            console.log("lat in map : ", latitude );
+            console.log("lng in map : ", longitude );
+            
+            app.currMapCenter.latitude = latitude;
+            app.currMapCenter.longitude = longitude;
+          
     },
 
     runSearchRequest : function(){
@@ -129,6 +135,7 @@ let app = {
 
         //clear marker queue
         app.markerQueueClear();
+
 
         let searchQuery = document.getElementById("nowsearchtext").value;
         console.log('searchQuery value : ', searchQuery);
@@ -145,37 +152,38 @@ let app = {
         //     types:[searchQuery]
         // };
 
-      let request ={
-            location: new google.maps.LatLng(app.currLoc.latitude, app.currLoc.longitude),
-            zoom: defaultZoom,
-            radius :1000,
-            query:searchQuery
-        };
 
-        let service = new google.maps.places.PlacesService(app.map);
-        service.textSearch(request, (results, status) =>{
-        //service.findPlaceFromQuery(request, (results, status) =>{
-        //service.nearbySearch(request, (results, status) =>{
-            if (status === google.maps.places.PlacesServiceStatus.OK){
-                console.group('query result group');
-                console.log('results retrieved : ', results);
-                //queryQueue = results;
-                
-                for(var i =0; i<results.length; i++){
-                    let place = results[i];
-                    console.log(i+1, results[i]);
+        let request ={
+                location: new google.maps.LatLng(app.currMapCenter.latitude, app.currMapCenter.longitude),
+                zoom: defaultZoom,
+                radius :1000,
+                query:searchQuery
+            };
+
+            let service = new google.maps.places.PlacesService(app.map);
+            service.textSearch(request, (results, status) =>{
+            //service.findPlaceFromQuery(request, (results, status) =>{
+            //service.nearbySearch(request, (results, status) =>{
+                if (status === google.maps.places.PlacesServiceStatus.OK){
+                    console.group('query result group');
+                    console.log('results retrieved : ', results);
+                    //queryQueue = results;
                     
+                    for(var i =0; i<results.length; i++){
+                        let place = results[i];
+                        console.log(i+1, results[i]);
+                        
 
-                    queryQueue.push(place);
-                    markerQueue.push(app.addPlaceMarker(place));
+                        queryQueue.push(place);
+                        markerQueue.push(app.addPlaceMarker(place));
 
-                    //createMarker(results[i]);
+                        //createMarker(results[i]);
+                    }
+                    console.groupEnd();
+
+
                 }
-                console.groupEnd();
-
-
-            }
-        });
+            });
 
     },
 
@@ -240,7 +248,17 @@ let app = {
             if(queryResult === null){
                 dispText += '<h1>no information...</h1>';
             }else{
-                let openhourText =  'opening_hours' in queryResult ? `${queryResult.opening_hours.isOpen()}` : 'no open hour info';
+                let openhourText = null;
+                console.group("opening hours log");
+                console.log('queryResult.opening_hours : ', queryResult.opening_hours);
+                if('opening_hours' in queryResult){
+                    console.log('property check : ', queryResult.opening_hours.isOpen);
+                    console.log('method check : ', queryResult.opening_hours.isOpen(new Date()));
+                    openhourText = queryResult.opening_hours.isOpen(new Date());
+                }else{
+                    openhourText =  'no open hour info';
+                }
+                console.groupEnd();
                 dispText += `<h1>${queryResult.name}</h1>
                             <p>rating : ${queryResult.rating}</p>
                             <p>total review number : ${queryResult.user_ratings_total}</p>
