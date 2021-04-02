@@ -39,8 +39,8 @@ let app = {
       if (navigator.geolocation) {
         let options = {
           enableHighAccuracy: true,
-          timeout: 2000, //2secs
-          maximumAge: 1000
+          timeout: 3000, //3secs
+          maximumAge: 1000 //2secs
         };
         navigator.geolocation.getCurrentPosition(
           app.gotPosition,
@@ -157,7 +157,7 @@ let app = {
         let request ={
                 location: new google.maps.LatLng(app.currMapCenter.latitude, app.currMapCenter.longitude),
                 zoom: defaultZoom,
-                radius :1000,
+                radius :500,//meters
                 query:searchQuery,
                 openNow:true,
                 //fields: ['formatted_address', 'name', 'rating','user_ratings_total', 'opening_hours', 'geometry'],
