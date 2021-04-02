@@ -11,6 +11,7 @@ let app = {
     currentInfoWindw : null,
     currLoc: null,
     currMapCenter: {latitude:null, longitude:null},
+    currService : null,
     defaultPos: { //default location to use if geolocation fails
       coords: {
         latitude: 45.555,
@@ -157,11 +158,13 @@ let app = {
                 location: new google.maps.LatLng(app.currMapCenter.latitude, app.currMapCenter.longitude),
                 zoom: defaultZoom,
                 radius :1000,
-                query:searchQuery
+                query:searchQuery,
+                openNow:true,
+                //fields: ['formatted_address', 'name', 'rating','user_ratings_total', 'opening_hours', 'geometry'],
             };
 
-            let service = new google.maps.places.PlacesService(app.map);
-            service.textSearch(request, (results, status) =>{
+            currService = new google.maps.places.PlacesService(app.map);
+            currService.textSearch(request, (results, status) =>{
             //service.findPlaceFromQuery(request, (results, status) =>{
             //service.nearbySearch(request, (results, status) =>{
                 if (status === google.maps.places.PlacesServiceStatus.OK){
@@ -224,6 +227,26 @@ let app = {
             app.loadPlaceMarkerInfo();
         }
     },
+    loadPlaceisOpen : function(id){
+        // https://note.toice.net/2020/06/19/google-map-place-opening-hours-open-now-to-isOpen-func/
+        if(!currService){
+            console.log('loadPlaceisOpen 1');
+            return undefined;
+        }
+
+        currService.getDetails({
+            placeId : id,
+            fields: ['opening_hours', 'utc_offset_minutes'],
+        }, (place, status) =>{
+            if(status !== 'OK'){
+                console.log('loadPlaceisOpen 2');
+                return undefined;}
+                console.log('loadPlaceisOpen 3');
+            return place.opening_hours.isOpen();
+        });
+        console.log('loadPlaceisOpen 4');
+        return undefined;
+    },
     loadPlaceMarkerInfo : function(){
         console.log("loadPlaceMarkerInfo");
 
@@ -248,23 +271,24 @@ let app = {
             if(queryResult === null){
                 dispText += '<h1>no information...</h1>';
             }else{
-                let openhourText = null;
-                console.group("opening hours log");
-                console.log('queryResult.opening_hours : ', queryResult.opening_hours);
-                if('opening_hours' in queryResult){
-                    console.log('property check : ', queryResult.opening_hours.isOpen);
-                    console.log('method check : ', queryResult.opening_hours.isOpen(new Date()));
-                    openhourText = queryResult.opening_hours.isOpen(new Date());
-                }else{
-                    openhourText =  'no open hour info';
-                }
-                console.groupEnd();
+                // let openhourText = null;
+                // console.group("opening hours log");
+                // console.log('queryResult.opening_hours : ', queryResult.place_id);
+                // if('opening_hours' in queryResult){
+                //     console.log('property check : ', app.loadPlaceisOpen(queryResult.place_id) );
+                //     //console.log('method check : ', queryResult.opening_hours.isOpen(new Date()));
+                //     openhourText = app.loadPlaceisOpen(queryResult.place_id);
+                // }else{
+                //     openhourText =  'no open hour info';
+                // }
+                // console.groupEnd();
                 dispText += `<h1>${queryResult.name}</h1>
                             <p>rating : ${queryResult.rating}</p>
                             <p>total review number : ${queryResult.user_ratings_total}</p>
-                            <p>is open now : ${openhourText}</p>
+                            
                             <p>address : ${queryResult.formatted_address}</p>
-                `;
+                            <p>${String(queryResult.photos[0].html_attributions[0]).replace(/>\.*</gi,"Deail info redirect")}</p>
+                `; //<!--<p>is open now : ${openhourText}</p>-->
             }
 
             app.currentInfoWindw = new google.maps.InfoWindow({
