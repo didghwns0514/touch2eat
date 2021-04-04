@@ -74,12 +74,22 @@
         font-size: 20px;
         color: #818181;
         display: block;
-        transition: 0.3s;
+        transition: 0.1s;
         }
 
         /* When you mouse over the navigation links, change their color */
         .sidebar a:hover {
         color: #f1f1f1;
+        }
+
+        .sidebar a table{
+        padding: 4px 4px 4px 8px;
+        text-decoration: none;
+        font-size: 10px;
+        color: #818181;
+        }
+        .sidebar a table tr:hover{
+        color: #c23a3a;
         }
 
         /* Position and style the close button (top right corner) */
@@ -172,13 +182,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#">About</a>
-        <a href="#">Services</a>
-        <a href="#">Clients</a>
-        <a href="#">Contact</a>
+        <a href="#">Suggestions For Me</a>
+        <a id="SimpleFilter" href="#">Simple Suggetsions by Filter</a>
+        <a href="#">About & Contact</a>
     </div>
     
-
 
     
     <div class="split up">
@@ -231,8 +239,8 @@
     <script>
         /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
         function openNav() {
-        document.getElementById("mySidebar").style.width = "200px";
-        document.getElementById("main").style.marginLeft = "200px";
+        document.getElementById("mySidebar").style.width = "250px";
+        document.getElementById("main").style.marginLeft = "250px";
         }
 
         /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */

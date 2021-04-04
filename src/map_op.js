@@ -11,6 +11,7 @@ let firstPosSmph = false;
 let app = {
     map: null,
     currentMarker: null,
+    currentLocMarker : null,
     currentInfoWindw : null,
     currLoc: null,
     currMapCenter: {latitude:null, longitude:null},
@@ -145,12 +146,31 @@ let app = {
             
             app.currMapCenter.latitude = latitude;
             app.currMapCenter.longitude = longitude;
+
           
     },
 
     runSearchRequest : function(){
         console.log("runSearchRequest");
         queryQueue = []; // reset query results object container
+
+        // delete existing table info
+        app.deleteTable();
+
+        // set cur position marker
+        if(app.currentLocMarker === null){
+            let ev = {
+                latLng : {
+                    lat : function () {return app.currLoc.latitude;},
+                    lng : function () {return app.currLoc.longitude;}
+                }
+            };
+            app.addMarker(ev);
+        }else{
+            // current place marker already exists
+            // pass
+        }
+        
 
         //define function for loop
         let functionReuquest = (in_request) => {
@@ -209,6 +229,10 @@ let app = {
                     for(var i=0; i < queryQueue.length; i++ ){
                         markerQueue.push(app.addPlaceMarker(queryQueue[i]));
                     }  
+
+                    // fill info in table
+                    app.updateTable();
+
                 }
             console.log("result ! : ", markerQueue );
             });
@@ -234,8 +258,7 @@ let app = {
                 radius :500,//meters
                 query:searchQuery,
                 openNow:true,
-                
-                //fields: ['formatted_address', 'name', 'rating','user_ratings_total', 'opening_hours', 'geometry'],
+                fields: ['formatted_address', 'name', 'rating','user_ratings_total', 'opening_hours', 'geometry', 'url'],
             };
 
         
@@ -244,10 +267,118 @@ let app = {
         functionReuquest(request);
 
     },
+    updateTable : function(){
+        console.group("UPDATE TABLE!");
+
+        //app.currentLocMarker : app.currentLocMarker.position.lat(), app.currentLocMarker.position.lng()
+        // app.currentLocMarker == null :: app.currLoc.latitude,  app.currLoc.longitude;
+
+        let setPoint = null;
+        if(app.currentLocMarker == null){
+            setPoint = {
+                lat : app.currLoc.latitude,
+                lng : app.currLoc.longitude
+            };
+        }else{
+            setPoint = {
+                lat : app.currentLocMarker.position.lat(),
+                lng : app.currentLocMarker.position.lng()
+            };
+        }
+
+        let compareFunction = (a, b)=>{
+            let tmpA = (a.rating * Math.sqrt(a.user_ratings_total))/Math.pow(Math.hypot(a.geometry.location.lat()-setPoint.lat, a.geometry.location.lng()-setPoint.lng),2); // (a.price_level + 1);
+            let tmpB = (b.rating * Math.sqrt(b.user_ratings_total))/Math.pow(Math.hypot(b.geometry.location.lat()-setPoint.lat, b.geometry.location.lng()-setPoint.lng),2); // (b.price_level + 1);
+
+            if(tmpA < tmpB){return 1;}
+            if(tmpA > tmpB){return -1;}
+            return 0;
+        }
+
+        let targetToCreate = document.getElementById("SimpleFilter");
+        //let s = document.createElement("script");
+
+        // set table element
+        let table = document.createElement("table");
+        table.setAttribute('id', 'SFid');
+        // add table headers
+        let tableHead = document.createElement("th");
+        let tableHeadText = document.createTextNode("Place Name");
+        tableHead.appendChild(tableHeadText);
+        table.appendChild(tableHead);
+
+        let tableHead2 = document.createElement("th");
+        let tableHeadText2 = document.createTextNode("Place rating");
+        tableHead2.appendChild(tableHeadText2);
+        table.appendChild(tableHead2);
+
+        // do simple sorting
+        queryQueue.sort(compareFunction);
+        console.log("queryQueue ::: ", queryQueue);
+        for(var iQ=0; iQ<queryQueue.length; iQ++){
+            let tmpElement = document.createElement("tr"); // table row
+            tmpElement.setAttribute('id', queryQueue[iQ].name);
+
+            tmpElement.onclick = app.mapFromTable;
+
+
+            let tmpValueElement = document.createElement("td");
+            let tmpValueElementText = document.createTextNode(queryQueue[iQ].name);
+            tmpValueElement.appendChild(tmpValueElementText);
+            tmpElement.appendChild(tmpValueElement);
+
+            let tmpValueElement2 = document.createElement("td");
+            let tmpValueElementText2 = document.createTextNode(queryQueue[iQ].rating);
+            tmpValueElement2.appendChild(tmpValueElementText2);
+            tmpElement.appendChild(tmpValueElement2);
+
+            table.appendChild(tmpElement);
+
+        }
+
+        targetToCreate.appendChild(table);
+
+
+        console.groupEnd();
+
+    },
+    deleteTable : function(){
+        console.log("DELETE TABLE!");
+        let elem = document.getElementById("SFid");
+        if(elem){elem.parentNode.removeChild(elem);}
+
+    },
+
+    mapFromTable : function(ev){
+
+            // console.log(ev);
+            // console.log(ev.path);
+            // console.log(typeof ev.path);
+            // console.log(typeof ev.path[1]);
+            console.log(ev.path[1].id);
+
+            let placeindex = null;
+            for(var t=0; t<markerQueue.length; t++){
+                if(markerQueue[t].title === ev.path[1].id){
+                    placeindex = t;
+                    break;
+                }
+            }
+
+            if(placeindex){
+                if(app.currentInfoWindw !== null){
+                    console.log("loadPlaceMarkerInfo - destroy");
+                    app.currentInfoWindw.close();
+                    app.currentInfoWindw = null;}
+                app.currentMarker = markerQueue[placeindex];
+                app.loadPlaceMarkerInfo();
+            }
+
+    },
 
     addPlaceMarker: function(result){
         console.log("addPlaceMarker");
-        let place_marker = new google.maps.Marker({
+        let marker = new google.maps.Marker({
         //let place_marker = new google.maps.Marker({
             map:app.map,
             draggable:false,
@@ -258,9 +389,10 @@ let app = {
             title:result.name
         });
 
-        place_marker.addListener("click", app.addPlaceMarkerClick);
+        marker.addListener("click", app.addPlaceMarkerClick);
 
-        return place_marker;
+        return marker;
+
     },
 
     addPlaceMarkerClick : function(ev){
@@ -281,6 +413,10 @@ let app = {
     },
 
     findRoutetoPlace : function(){
+
+        // init existing routes
+        app.directionQueueClear();
+
         if(app.currentMarker === null){
             alert("Please click a marker from map!");
         }else{
@@ -291,18 +427,58 @@ let app = {
             let k = document.getElementById("myTravelMethod");
 
             let travelMethod = k.options[k.selectedIndex].value;
+            let transType = null;
+            let typeOption = null;
+
+            if(travelMethod === '0'){ //Public Transport
+                transType = 'TRANSIT';
+                typeOption = {
+                    transitOption : {
+                        modes:[],
+                        //modes:['BUS', 'SUBWAY', 'TRAM', 'TRAIN', 'RAIL'],
+                        //routingPreference: 'LESS_WALKING',
+                    },
+                    drivingOptions : null,
+
+                };
+            }else if(travelMethod === '1'){
+                transType = 'DRIVING';
+                typeOption = {
+                    transitOption : null,
+                    drivingOptions : null,
+                    
+                };
+            }else if(travelMethod === '2'){
+                transType = 'WALKING';
+                typeOption = {
+                    transitOption : null,
+                    drivingOptions : null,
+                    
+                };
+            }
 
             console.log(`app.currLoc.latitude, app.currLoc.longitude : ${app.currLoc.latitude}, ${app.currLoc.longitude}`);
             console.log(`app.currentMarker.position.lat, app.currentMarker.position.lng : ${app.currentMarker.position.lat()}, ${app.currentMarker.position.lng()}`);
 
+            if(app.currentLocMarker === null){
+                let ev = {
+                    latLng : {
+                        lat : function () {return app.currLoc.latitude;},
+                        lng : function () {return app.currLoc.longitude;}
+                    }
+                };
+                app.addMarker(ev);
+            }else{
+                // current place marker already exists
+                // pass
+            }
+            
             let request = {
-                origin: new google.maps.LatLng(app.currLoc.latitude, app.currLoc.longitude),
+                origin: new google.maps.LatLng(app.currentLocMarker.position.lat(), app.currentLocMarker.position.lng()),
                 destination: new google.maps.LatLng(app.currentMarker.position.lat(), app.currentMarker.position.lng()),
-                travelMode:google.maps.DirectionsTravelMode.TRANSIT,
-                transitOptions:{
-                    modes:['BUS', 'SUBWAY', 'TRAM', 'TRAIN', 'RAIL'],
-                    routingPreference: 'FEWER_TRANSFERS',
-                },
+                travelMode:transType,
+                transitOptions:typeOption.transitOption,
+                drivingOptions:typeOption.drivingOptions,
                 unitSystem: google.maps.UnitSystem.METRIC
 
             };
@@ -315,7 +491,12 @@ let app = {
                 console.groupEnd();
 
                 if (status == 'OK'){
-                    let directionRender = new google.maps.DirectionsRenderer();
+                    let directionRender = new google.maps.DirectionsRenderer({
+                        polylineOptions: {
+                          //strokeColor: "#00FF00"
+                        },
+                        suppressMarkers: true,
+                      });
                     // directionRender.setMap(app.map);
                     // directionRender.setDirections(result);
 
@@ -325,6 +506,8 @@ let app = {
                         directionQueue[i].setDirections(result);
                     }
 
+                }else{
+                    alert('no direction found..! Please select Public Transportation and retry');
                 }
 
             });
@@ -364,6 +547,7 @@ let app = {
                             <p>total review number : ${queryResult.user_ratings_total}</p>
                             
                             <p>address : ${queryResult.formatted_address}</p>
+                            <p>more info : <a href=https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(queryResult.name)}&query_place_id=${queryResult.place_id}>Link</a></p>
                             
                 `; //<!--<p>is open now : ${openhourText}</p>-->
                 // <p>${String(queryResult.photos[0].html_attributions[0]).replace(/>\.*</gi,"Deail info redirect")}</p>
@@ -393,38 +577,58 @@ let app = {
     addMapListeners: function() {
       console.log("addMapListeners");
       //add double click listener to the map object
+
       app.map.addListener("dblclick", app.addMarker);
+
     },
     addMarker: function(ev) {
       console.log("addMarker", ev);
-      let marker = new google.maps.Marker({
-        map: app.map,
-        draggable: false,
-        position: {
-          lat: ev.latLng.lat(),
-          lng: ev.latLng.lng()
-        }
-      });
-      //add click listener to Marker
-      marker.addListener("click", app.markerClick);
-      //add double click listener to Marker
-      marker.addListener("dblclick", app.markerDblClick);
+      console.log("app.currentLocMarker before :: ", app.currentLocMarker);
+      
+      if(app.currentLocMarker === null){
+        app.currentLocMarker= new google.maps.Marker({
+            map: app.map,
+            draggable: true,
+            icon: {
+                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+              },
+            position: {
+            lat: ev.latLng.lat(),
+            lng: ev.latLng.lng()
+            }
+        });
+        //add click listener to Marker
+        app.currentLocMarker.addListener("click", app.markerClick);
+        //add double click listener to Marker
+        app.currentLocMarker.addListener("dblclick", app.markerDblClick);
+        // dragging the marker
+        app.currentLocMarker.addListener("drag", (ev)=>{
+            app.deleteTable();
+            app.updateTable();
+        });
+
+
+      }else{
+        app.currentLocMarker.setMap(null);
+        app.currentLocMarker = null;
+        app.addMarker(ev);
+      }
+      console.log("app.currentLocMarker after :: ", app.currentLocMarker);
     },
     markerClick: function(ev) {
       console.log("Click", ev);
       console.log(this);
       let marker = this; // to use the marker locally
-      app.currentMarker = marker; //to use the marker globally
+      app.currentLocMarker = marker; //to use the marker globally
       app.map.panTo(marker.getPosition());
     },
     markerDblClick: function(ev) {
       console.log("Double Click", ev);
       console.log(this);
       let marker = this; //to use the marker locally
-      //app.currentMarker = marker; //to use the marker globally
-      //remove the marker from the map
+
       marker.setMap(null);
-      app.currentMarker = null;
+      app.currentLocMarker = null;
     },
     failPosition: function(err) {
       console.log("failPosition", err);
