@@ -134,6 +134,69 @@ let app = {
         console.log("runSearchRequest");
         queryQueue = []; // reset query results object container
 
+        //define function for loop
+        let functionReuquest = (in_request) => {
+
+            let request = in_request;// get request when called
+
+            currService = new google.maps.places.PlacesService(app.map);
+            currService.textSearch(request, (results, status, next_page_token) =>{
+            //service.findPlaceFromQuery(request, (results, status) =>{
+            //service.nearbySearch(request, (results, status) =>{
+                console.log("results :: ", results);
+                console.log("status :: ", status);
+                console.log("next_page_token :: ", next_page_token);
+                if (status === google.maps.places.PlacesServiceStatus.OK){
+                    // console.group('query result group');
+                    // console.log('results retrieved : ', results);
+                    //queryQueue = results;
+                    
+                    for(var i =0; i<results.length; i++){
+                        let place = results[i];
+                        // console.log(i+1, results[i]);
+                        
+                        let duplicateFound = false;
+                        for(var j=0; j < queryQueue.length; j++){
+                            
+                            if(queryQueue[j].name === place.name){
+                                duplicateFound = true;
+                                break;
+                            }
+                        }
+                        if(duplicateFound===false){
+                            queryQueue.push(place);
+                        }
+                        //markerQueue.push(app.addPlaceMarker(place));
+
+                        //createMarker(results[i]);
+                    }
+                    console.log('next_page_token : ', next_page_token);
+                    console.log('next_page_token.o : ', next_page_token.o);
+                    // console.groupEnd();
+                    
+                    //return next_page_token;
+                    //resolve(next_page_token);
+                    if(next_page_token){
+                        let subreqest = {
+                            pagetoken:next_page_token.o,
+                            query:request.query,
+                        }
+                        //request.pagetoken = next_page_token.o;
+                        functionReuquest(subreqest);
+                    }else{
+
+                    }
+                }else{
+                    console.log("queryQueue : ", queryQueue);
+                    for(var i=0; i < queryQueue.length; i++ ){
+                        markerQueue.push(app.addPlaceMarker(queryQueue[i]));
+                    }  
+                }
+            console.log("result ! : ", markerQueue );
+            });
+
+        };
+
         //clear marker queue
         app.markerQueueClear();
 
@@ -141,17 +204,9 @@ let app = {
         let searchQuery = document.getElementById("nowsearchtext").value;
         console.log('searchQuery value : ', searchQuery);
 
-        // let request = {
-        //     query : searchQuery,
-        //     fields: ['formatted_address', 'name', 'rating','user_ratings_total', 'opening_hours', 'geometry'],
-        //     radius:1000,
-        // };
-        // let request ={
-        //     location: new google.maps.LatLng(app.currLoc.latitude, app.currLoc.longitude),
-        //     zoom: defaultZoom,
-        //     radius :1000,
-        //     types:[searchQuery]
-        // };
+        //next page token
+        let nextPageToken = null;
+        let nextPageSemephore = false;
 
 
         let request ={
@@ -160,33 +215,18 @@ let app = {
                 radius :500,//meters
                 query:searchQuery,
                 openNow:true,
+                
                 //fields: ['formatted_address', 'name', 'rating','user_ratings_total', 'opening_hours', 'geometry'],
             };
 
-            currService = new google.maps.places.PlacesService(app.map);
-            currService.textSearch(request, (results, status) =>{
-            //service.findPlaceFromQuery(request, (results, status) =>{
-            //service.nearbySearch(request, (results, status) =>{
-                if (status === google.maps.places.PlacesServiceStatus.OK){
-                    console.group('query result group');
-                    console.log('results retrieved : ', results);
-                    //queryQueue = results;
-                    
-                    for(var i =0; i<results.length; i++){
-                        let place = results[i];
-                        console.log(i+1, results[i]);
-                        
+        
 
-                        queryQueue.push(place);
-                        markerQueue.push(app.addPlaceMarker(place));
+        //nextPageToken = functionReuquest(request);
+        functionReuquest(request);
 
-                        //createMarker(results[i]);
-                    }
-                    console.groupEnd();
+        
+        // console.log('nextPageToken RETRIEVED  : ', nextPageToken);
 
-
-                }
-            });
 
     },
 
@@ -287,8 +327,9 @@ let app = {
                             <p>total review number : ${queryResult.user_ratings_total}</p>
                             
                             <p>address : ${queryResult.formatted_address}</p>
-                            <p>${String(queryResult.photos[0].html_attributions[0]).replace(/>\.*</gi,"Deail info redirect")}</p>
+                            
                 `; //<!--<p>is open now : ${openhourText}</p>-->
+                // <p>${String(queryResult.photos[0].html_attributions[0]).replace(/>\.*</gi,"Deail info redirect")}</p>
             }
 
             app.currentInfoWindw = new google.maps.InfoWindow({
