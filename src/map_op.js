@@ -3,7 +3,10 @@ const GOOGLE_MAP_KEY = tmp_G.getAttribute("gk");
 const defaultZoom = 16;
 let queryQueue = [];
 let markerQueue = [];
+let directionQueue = [];
 let firstPosSmph = false;
+
+
 
 let app = {
     map: null,
@@ -11,7 +14,8 @@ let app = {
     currentInfoWindw : null,
     currLoc: null,
     currMapCenter: {latitude:null, longitude:null},
-    currService : null,
+    currServicePlace : null,
+    currServiceDirection : null,
     defaultPos: { //default location to use if geolocation fails
       coords: {
         latitude: 45.555,
@@ -63,6 +67,14 @@ let app = {
         }
         markerQueue = []; // reset marker container
     },
+    directionQueueClear : function(){
+        console.log("directionQueueClear is called!");
+        for(var i=0; i<directionQueue.length;i++){
+            directionQueue[i].setMap(null);
+        }
+        directionQueue = []; // reset marker container        
+
+    },
     
     gotPosition: function(position) {
       console.log("gotPosition", position.coords);
@@ -109,6 +121,12 @@ let app = {
       //add map event listeners
       app.addMapListeners();
       app.getMapCenter();
+      app.getRoute();
+    },
+
+    getRoute : function () {
+        let routebutton = document.getElementById("routebutton");
+        routebutton.addEventListener("click",app.findRoutetoPlace);
     },
 
     getMapCenter : function(){
@@ -139,8 +157,8 @@ let app = {
 
             let request = in_request;// get request when called
 
-            currService = new google.maps.places.PlacesService(app.map);
-            currService.textSearch(request, (results, status, next_page_token) =>{
+            currServicePlace = new google.maps.places.PlacesService(app.map);
+            currServicePlace.textSearch(request, (results, status, next_page_token) =>{
             //service.findPlaceFromQuery(request, (results, status) =>{
             //service.nearbySearch(request, (results, status) =>{
                 console.log("results :: ", results);
@@ -197,8 +215,9 @@ let app = {
 
         };
 
-        //clear marker queue
+        //clear marker queue / direction queue
         app.markerQueueClear();
+        app.directionQueueClear();
 
 
         let searchQuery = document.getElementById("nowsearchtext").value;
@@ -223,10 +242,6 @@ let app = {
 
         //nextPageToken = functionReuquest(request);
         functionReuquest(request);
-
-        
-        // console.log('nextPageToken RETRIEVED  : ', nextPageToken);
-
 
     },
 
@@ -260,33 +275,65 @@ let app = {
             app.loadPlaceMarkerInfo();
 
         }else{
-            //curr marker already exists, remove all
-            //let marker = this; //to use the marker locally
-            //marker.setMap(null); // erase from map
             app.currentMarker = null;
             app.loadPlaceMarkerInfo();
         }
     },
-    loadPlaceisOpen : function(id){
-        // https://note.toice.net/2020/06/19/google-map-place-opening-hours-open-now-to-isOpen-func/
-        if(!currService){
-            console.log('loadPlaceisOpen 1');
-            return undefined;
-        }
 
-        currService.getDetails({
-            placeId : id,
-            fields: ['opening_hours', 'utc_offset_minutes'],
-        }, (place, status) =>{
-            if(status !== 'OK'){
-                console.log('loadPlaceisOpen 2');
-                return undefined;}
-                console.log('loadPlaceisOpen 3');
-            return place.opening_hours.isOpen();
-        });
-        console.log('loadPlaceisOpen 4');
-        return undefined;
+    findRoutetoPlace : function(){
+        if(app.currentMarker === null){
+            alert("Please click a marker from map!");
+        }else{
+            // app.currLoc
+            currServiceDirection = new google.maps.DirectionsService();
+            
+            // find travel method
+            let k = document.getElementById("myTravelMethod");
+
+            let travelMethod = k.options[k.selectedIndex].value;
+
+            console.log(`app.currLoc.latitude, app.currLoc.longitude : ${app.currLoc.latitude}, ${app.currLoc.longitude}`);
+            console.log(`app.currentMarker.position.lat, app.currentMarker.position.lng : ${app.currentMarker.position.lat()}, ${app.currentMarker.position.lng()}`);
+
+            let request = {
+                origin: new google.maps.LatLng(app.currLoc.latitude, app.currLoc.longitude),
+                destination: new google.maps.LatLng(app.currentMarker.position.lat(), app.currentMarker.position.lng()),
+                travelMode:google.maps.DirectionsTravelMode.TRANSIT,
+                transitOptions:{
+                    modes:['BUS', 'SUBWAY', 'TRAM', 'TRAIN', 'RAIL'],
+                    routingPreference: 'FEWER_TRANSFERS',
+                },
+                unitSystem: google.maps.UnitSystem.METRIC
+
+            };
+            //, google.maps.DirectionsTravelMode.WALKING],
+
+            currServiceDirection.route(request, (result, status)=>{
+                console.group("Route finder");
+                console.log("result", result);
+                console.log("status", status);
+                console.groupEnd();
+
+                if (status == 'OK'){
+                    let directionRender = new google.maps.DirectionsRenderer();
+                    // directionRender.setMap(app.map);
+                    // directionRender.setDirections(result);
+
+                    directionQueue.push(directionRender)
+                    for(var i=0; i<directionQueue.length; i++){
+                        directionQueue[i].setMap(app.map);
+                        directionQueue[i].setDirections(result);
+                    }
+
+                }
+
+            });
+
+        }
+        
+
     },
+
     loadPlaceMarkerInfo : function(){
         console.log("loadPlaceMarkerInfo");
 
@@ -311,17 +358,7 @@ let app = {
             if(queryResult === null){
                 dispText += '<h1>no information...</h1>';
             }else{
-                // let openhourText = null;
-                // console.group("opening hours log");
-                // console.log('queryResult.opening_hours : ', queryResult.place_id);
-                // if('opening_hours' in queryResult){
-                //     console.log('property check : ', app.loadPlaceisOpen(queryResult.place_id) );
-                //     //console.log('method check : ', queryResult.opening_hours.isOpen(new Date()));
-                //     openhourText = app.loadPlaceisOpen(queryResult.place_id);
-                // }else{
-                //     openhourText =  'no open hour info';
-                // }
-                // console.groupEnd();
+
                 dispText += `<h1>${queryResult.name}</h1>
                             <p>rating : ${queryResult.rating}</p>
                             <p>total review number : ${queryResult.user_ratings_total}</p>
@@ -347,6 +384,9 @@ let app = {
             }else{
                 console.log("loadPlaceMarkerInfo - null");
             }
+
+            //clear if routes exist
+            app.directionQueueClear();
         }
     },
 
@@ -396,217 +436,3 @@ let app = {
   app.init();
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// let map;
-
-// const tmp_G = document.getElementById("needme");
-// const GOOGLE_MAP_KEY = tmp_G.getAttribute("gk");
-// //console.log('map key : ',GOOGLE_MAP_KEY);
-
-// const curPosFunction = ()=>{
-
-//     return new Promise( (resolve, reject) => {
-//         if (navigator.geolocation){
-//             navigator.geolocation.getCurrentPosition(
-//                 (position) => {
-    
-//                     // position.coords.latitude
-//                     // position.coords.longitude
-//                     console.group('map cur pose');
-//                     console.log('lat : ', position.coords.latitude);
-//                     console.log('lng : ', position.coords.longitude);
-//                     console.groupEnd();
-//                     resolve( [position.coords.latitude, position.coords.longitude]);
-//                 });
-    
-            
-    
-//         }else{
-//             resolve([ 45.4496711, -75.6569551 ]);
-//         }
-
-//     })
-
-// }
-
-// function mapFactory(t_lat, t_lng){
-//     return new google.maps.Map(document.getElementById("map"), {
-//         center: {
-//             lat: t_lat,
-//             lng: t_lng
-//         },
-//         zoom: 15,
-//         mapTypeId: google.maps.MapTypeId.ROADMAP,
-//         restriction: {
-//             latLngBounds: {
-//                 north: 50.00,
-//                 south: 40.00,
-//                 west: -100.00,
-//                 east: -60.00,
-//             }
-//         },
-//         minZoom: 10,
-//         maxZoom: 17,
-//         disableDoubleClickZoom: false,
-//         clickableIcons: false,
-//         disableDefaultUI: true,
-//         zoomControl: true,
-//         zoomControlOptions: {
-//             position: google.maps.ControlPosition.RIGHT_CENTER
-//         },
-//         mapTypeControl: true,
-//         mapTypeControlOptions: {
-//             style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-//             mapTypeIds: ["roadmap", "terrain", "satellite"],
-//             position: google.maps.ControlPosition.LEFT_TOP
-//         },
-//         fullscreenControl: true,
-//         fullscreenControlOptions: {
-//             position: google.maps.ControlPosition.RIGHT_TOP
-//         },
-//         scaleControl: false,
-//         streetViewControl: true,
-//         streetViewControlOptions: {
-//             position: google.maps.ControlPosition.RIGHT_BOTTOM
-//         },
-//         rotateControl: true
-//     });
-// }
-
-
-// document.addEventListener("DOMContentLoaded", () => {
-//     let s = document.createElement("script");
-//     let locationButton = document.getElementById("nowbutton");
-
-//     document.head.appendChild(s);
-
-//     s.addEventListener("load", () => {
-//         //script has loaded
-//         console.log("script has loaded. About to load the map");
-
-//         curPosFunction().then((result)=>{
-//             console.log('after resolve : ', result);
-
-//             map = mapFactory(result[0], result[1]);
-//         });
-
-//     });
-    
-//     s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_KEY}`;
-
-        
-//     locationButton.addEventListener("click", ()=>{
-//         //event triggered from button
-//         console.log("event triggered by the map");
-
-//         curPosFunction().then((result)=>{
-//             console.log('after resolve : ', result);
-
-//             map = mapFactory(result[0], result[1]);
-//         });
-
-
-//     });
-
-
-    
-// });
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// let map;
-
-// const tmp_G = document.getElementById("needme");
-// const GOOGLE_MAP_KEY = tmp_G.getAttribute("gk");
-// //console.log('map key : ',GOOGLE_MAP_KEY);
-
-// document.addEventListener("DOMContentLoaded", () => {
-//     let s = document.createElement("script");
-//     let locationButton = document.getElementById("nowbutton");
-
-//     document.head.appendChild(s);
-//     s.addEventListener("load", () => {
-//         //script has loaded
-        
-
-//         console.log("script has loaded. About to load the map");
-//         map = new google.maps.Map(document.getElementById("map"), {
-//             center: {
-//                 lat: 45.4496711,
-//                 lng: -75.6569551
-//             },
-//             zoom: 15,
-//             mapTypeId: google.maps.MapTypeId.ROADMAP,
-//             restriction: {
-//                 latLngBounds: {
-//                     north: 50.00,
-//                     south: 40.00,
-//                     west: -100.00,
-//                     east: -60.00,
-//                 }
-//             },
-//             minZoom: 10,
-//             maxZoom: 17,
-//             disableDoubleClickZoom: false,
-//             clickableIcons: false,
-//             disableDefaultUI: true,
-//             zoomControl: true,
-//             zoomControlOptions: {
-//                 position: google.maps.ControlPosition.RIGHT_CENTER
-//             },
-//             mapTypeControl: true,
-//             mapTypeControlOptions: {
-//                 style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-//                 mapTypeIds: ["roadmap", "terrain", "satellite"],
-//                 position: google.maps.ControlPosition.LEFT_TOP
-//             },
-//             fullscreenControl: true,
-//             fullscreenControlOptions: {
-//                 position: google.maps.ControlPosition.RIGHT_TOP
-//             },
-//             scaleControl: false,
-//             streetViewControl: true,
-//             streetViewControlOptions: {
-//                 position: google.maps.ControlPosition.RIGHT_BOTTOM
-//             },
-//             rotateControl: true
-//         });
-//     });
-//     s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAP_KEY}`;
-
-        
-//     locationButton.addEventListener("click", ()=>{
-        
-//         if (navigator.geolocation){
-//             navigator.geolocation.getCurrentPosition(
-//                 (position) => {
-//                     const pos = {
-//                         lat:position.coords.latitude,
-//                         lng:position.coords.longitude
-//                     };
-
-//                     map = new google.maps.Map(document.getElementById("map"), {
-//                         center: {
-//                             lat:pos.lat,
-//                             lng:pos.lng
-//                         },
-//                         zoom:16,
-//                         mapTypeId: google.maps.MapTypeId.ROADMAP
-//                     })
-
-//                 }
-
-//             );
-
-//         }else{
-//             alert('cannot get current location..!')
-//         }
-    
-//     });
-
-
-    
-// });
