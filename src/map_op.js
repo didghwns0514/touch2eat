@@ -92,7 +92,7 @@ let app = {
           lng: position.coords.longitude
         },
         mapTypeId: google.maps.MapTypeId.ROADMAP,
-        minZoom: 10,
+        minZoom: 4,
         maxZoom: 17,
         disableDoubleClickZoom: true,
         gestureHandling: "greedy", // disable two fingers
@@ -158,18 +158,27 @@ let app = {
         app.deleteTable();
 
         // set cur position marker
-        if(app.currentLocMarker === null){
-            let ev = {
-                latLng : {
-                    lat : function () {return app.currLoc.latitude;},
-                    lng : function () {return app.currLoc.longitude;}
-                }
-            };
-            app.addMarker(ev);
-        }else{
-            // current place marker already exists
-            // pass
-        }
+        // if(app.currentLocMarker === null){
+        //     let ev = {
+        //         latLng : {
+        //             lat : function () {return app.currMapCenter.latitude;},
+        //             lng : function () {return app.currMapCenter.longitude;}
+        //         }
+        //     };
+        //     app.addMarker(ev);
+        // }else{
+        //     // current place marker already exists
+        //     // rewrite
+
+        // }
+
+        let ev = {
+            latLng : {
+                lat : function () {return app.currMapCenter.latitude;},
+                lng : function () {return app.currMapCenter.longitude;}
+            }
+        };
+        app.addMarker(ev);
         
 
         //define function for loop
@@ -287,8 +296,8 @@ let app = {
         }
 
         let compareFunction = (a, b)=>{
-            let tmpA = (a.rating * Math.sqrt(a.user_ratings_total))/Math.pow(Math.hypot(a.geometry.location.lat()-setPoint.lat, a.geometry.location.lng()-setPoint.lng),2); // (a.price_level + 1);
-            let tmpB = (b.rating * Math.sqrt(b.user_ratings_total))/Math.pow(Math.hypot(b.geometry.location.lat()-setPoint.lat, b.geometry.location.lng()-setPoint.lng),2); // (b.price_level + 1);
+            let tmpA = (a.rating * Math.sqrt(a.user_ratings_total))/Math.pow(Math.hypot(a.geometry.location.lat()-setPoint.lat, a.geometry.location.lng()-setPoint.lng),1); // (a.price_level + 1);
+            let tmpB = (b.rating * Math.sqrt(b.user_ratings_total))/Math.pow(Math.hypot(b.geometry.location.lat()-setPoint.lat, b.geometry.location.lng()-setPoint.lng),1); // (b.price_level + 1);
 
             if(tmpA < tmpB){return 1;}
             if(tmpA > tmpB){return -1;}
