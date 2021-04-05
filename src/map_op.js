@@ -119,6 +119,11 @@ let app = {
         },
         rotateControl: true
     });
+      //set map center after load
+      let center = app.map.getCenter();
+      app.currMapCenter.latitude = center.lat();
+      app.currMapCenter.longitude = center.lng();      
+
       //add map event listeners
       app.addMapListeners();
       app.getMapCenter();
@@ -171,7 +176,7 @@ let app = {
         //     // rewrite
 
         // }
-
+        console.log("app.currMapCenter ::: ", app.currMapCenter);
         let ev = {
             latLng : {
                 lat : function () {return app.currMapCenter.latitude;},

@@ -25,6 +25,7 @@ app.engine("html", require('ejs').renderFile);
 // set file locations
 app.set('views', __dirname + '/views');
 app.use('/src', express.static(__dirname + "/src"));
+app.use('/images', express.static(__dirname + "/images"));
 
 // google auth
 const session = require('express-session');

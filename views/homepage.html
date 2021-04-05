@@ -2,15 +2,102 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style></style>
+
+    <!-- 부트스트랩 -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- AniCollection.css library -->
+    <link rel="stylesheet" href="http://anijs.github.io/lib/anicollection/anicollection.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap');
+
+        body{
+            /* background:  url("/images/main_resize_edited.jpg") center no-repeat,-webkit-gradient(radial-gradient, color-stop(0%, #171118), color-stop(100%, #0e0f11)); */
+            background:  rgb(235, 229, 229);
+            
+            /* background-color: radial-gradient(rgb(44, 23, 23), rgb(15, 15, 20)); */
+            /* url("/images/main_resize_edited.jpg") center no-repeat,  
+                radial-gradient(rgb(44, 23, 23), rgb(15, 15, 20)),
+            */
+
+            background-attachment: fixed;
+            font-family: 'Dela Gothic One', cursive;
+            /*no-repeat scroll left center;*/
+        }
+
+        /* set colors*/
+        :root {
+        --color-1: rgb(4, 12, 4);
+        --color-2: rgb(199, 96, 36);
+        --color-3: darksalmon;
+        --color-4: palegoldenrod;
+        --color-5: mediumvioletred;
+        --transparant-1:0.7;
+        --transparent-2:0.5;
+        }
+
+        .foo {
+        min-height: 33vh;
+        margin-bottom: 10px;
+        padding: 10px;
+        color: white;
+
+        }
+
+        /* apply colors */
+        .foo-1 {
+        background-color: var(--color-1);
+        }
+
+        .foo-2 {
+        background-color: var(--color-2);
+        }
+
+        .foo-3 {
+        background-color: var(--color-3);
+        }
+
+        .foo-4 {
+        background-color: var(--color-4);  
+        }
+
+        .foo-5 {
+        background-color: var(--color-5);
+        }
+
+        .intext{
+        opacity:1 !important;
+        }
+    </style>
 </head>
     <body>
-        <h1>Welcome to my Hompage</h1>
+        <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script defer src="js/bootstrap.min.js"></script>
+        <script defer src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
+        <script defer src="/src/homepage_op.js" type="text/javascript" ></script>
+
+
+        <nav>
+            <div></div>
+        </nav>
+        <header>
+            <div></div>
+        </header>
+
+        <div class="foo  foo-1">
+            <h1 class="intext">Welcome to my Hompage</h1>
+        </div>
+        
         <!-- <meta http-equiv="refresh" content="5;url=./login.html" /> -->
-        <a href="login">Log in!</a>
-        <a href="login/logout">Log out!</a>
-        <a href="map">Map page!</a>
+        <div class="foo  foo-2">
+            <a class="intext" href="login">Log in!</a>
+            <a class="intext" href="login/logout">Log out!</a>
+            <a class="intext" href="map">Map page!</a>
+        </div>
+
     </body>
 </html>
