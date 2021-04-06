@@ -7,29 +7,47 @@
 // GENERAL SETTING
 window.sr = ScrollReveal({ reset: true });
 
-// Custom Settings
-sr.reveal('.foo-1', { 
-  duration: 200,
+sr.reveal('')
 
+
+// Custom Settings
+sr.reveal('.col-right', { 
+  origin: 'right', 
+  duration: 1000,
+  viewFactor: 0.5
 });
 
-sr.reveal('.foo-2', { 
+sr.reveal('.search', { 
   origin: 'right', 
   duration: 2000,
   viewFactor: 0.5 
   
 });
 
-sr.reveal('.foo-3', { 
-  rotate: { x: 100, y: 100, z: 0 },
-  duration: 1000,
-  viewFactor: 0.5
+sr.reveal('.login', { 
+  origin: 'right', 
+  duration: 2000,
+  viewFactor: 0.5 
+  
 });
 
-sr.reveal('.foo-4', { 
-  viewFactor: 0.5
+sr.reveal('.searchwrap', { 
+  origin: 'right', 
+  duration: 3000,
+  viewFactor: 0.5 
+  
 });
 
-sr.reveal('.foo-5', { 
-  duration: 200 
-});
+// sr.reveal('.foo-3', { 
+//   rotate: { x: 100, y: 100, z: 0 },
+//   duration: 1000,
+//   viewFactor: 0.5
+// });
+
+// sr.reveal('.foo-4', { 
+//   viewFactor: 0.5
+// });
+
+// sr.reveal('.foo-5', { 
+//   duration: 200 
+// });
