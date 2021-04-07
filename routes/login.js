@@ -29,7 +29,7 @@ module.exports = function(app, passport) {
     .get((req, res, next) => {
       console.log('r-1');
       //res.redirect('/login/google');
-      return res.render('wait.html', {info_disp: `Now taking you to goolge login...`, redirect:"/login/google"});
+      return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/google"});
     });
 
   router
