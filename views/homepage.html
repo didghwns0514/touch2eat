@@ -15,7 +15,7 @@
 
         /* set colors*/
         :root {
-            --color-1: rgb(4, 12, 4);
+            --color-1: rgb(11, 12, 4);
             --color-2: rgb(199, 96, 36);
             --color-3: darksalmon;
             --color-4: palegoldenrod;
@@ -39,7 +39,7 @@
 
         .topnav{
             text-align: center;
-            background-color: #264d00;
+            background-color: #194106;
             border-bottom-left-radius:  5px;
             border-bottom-right-radius: 5px;
             margin: 0 4px 10px 4px;
@@ -81,11 +81,16 @@
             background-repeat: no-repeat;
             background-size: cover;
             background-color : white;
+            min-height : 260px;
+            padding : 10px;
 
             -webkit-flex: 1;
             -ms-flex: 1;
             flex: 1;
         }
+            .colum.right.banner{
+                margin: 0 0 30px 0;
+            }
 
         /* left column */
         .column.left {
@@ -95,11 +100,12 @@
             flex: 2;
             
         }
+
         /* box */
         .box{
 
             height : 60px;
-            margin: 8px 0 8px 0;
+            margin: 12px 0 12px 0;
             border-radius: 25px;
 
         }
@@ -111,9 +117,9 @@
 
         }   
             .searchHeader{
-                background-color : red;
+                background-color : rgba(13, 56, 45, 0.514);
 
-                height : 80%;
+                max-height : 80%;
                 border-top-left-radius:  10px;
                 border-bottom-left-radius: 10px;
                 -webkit-flex: 1;
@@ -121,19 +127,24 @@
                 flex : 1;
 
             }
+                .searchHeader.name{
+                    margin-top: 15px;
+                    color:white;
+                }
             .searchwrap {
-                padding : 0 10px 0 0;
+                padding : 0 20px 0 0;
                 height : 80%;
+                /* width : 0px; */
                 display: -webkit-flex;
                 display: flex;
-                -webkit-flex: 8;
+                -webkit-flex: 8 ;
                 -ms-flex: 8;
                 flex : 8;
             }
 
             .searchTerm {
                 /* https://nykim.work/4 */
-                border: 3px solid red;
+                border: 1px solid rgb(6, 26, 21);
                 border-right: none;
                 padding: 5px;
                 outline: none;
@@ -153,9 +164,11 @@
                 width:20px;
                 background: #004d00;
                 color: #fff;
-
+                box-shadow: none;
+                border: 0;
                 cursor: pointer;
                 font-size: 20px;
+                
                 -webkit-flex: 1 1 20px;
                 -ms-flex: 1 1 20px;
                 flex : 1 1 20px;
@@ -163,7 +176,23 @@
 
         .box.login{
             background-color: var(--color-2);
+            display: -webkit-flex;
+            display: flex;
+            cursor: pointer;
         }
+            .loginHeader{
+                background-color : rgba(13, 56, 45, 0.486);
+                width : 52px;
+                max-height : 90%;
+                border-top-left-radius:  10px;
+                border-bottom-left-radius: 10px;
+                margin: 6px 0 6px 18px;
+            }
+            .loginHeadername{
+                margin-top: 15px;
+                color:white;
+
+            }
 
         /* Style the footer */
         .footer {
@@ -223,9 +252,14 @@
 
             <div class="header">
             <h2>
-                Search For Places to EAT!
+                Search For Places to EAT
             </h2>
-            <p></p>
+            <p>
+                Click search button to search your food!
+            </p>
+            <p>
+                Login to your Google account for more accurate search resuls!
+            </p>
             </div>
 
             <div class="content">
@@ -233,20 +267,30 @@
                 <h2>CSS Template</h2>
                 <p>A topnav, content and a footer.</p>
                 -->
-                <div class="box search" data-anijs="if: load, on: window, do: rubberBand animated">
-                    <div class="searchHeader" onclick="controlNav()"></div>
-                    <div class="searchwrap">
-                    <input type="text" class="searchTerm" placeholder="What food are you lookin for?">
-                    <button type="submit" class="searchButton"><i class="fa fa-search"></i></button>
+                <div id="box-search" class="box search" data-anijs="if: load, on: window, do: rubberBand animated">
+                    <div class="searchHeader" onclick="controlNav()" >
+                        <div class="searchHeader name">Search</div>
+                    </div>
+                    <div id="search-wrap" class="searchwrap">
+                    <!-- <input type="text" id="search-Term" class="searchTerm" placeholder="What food are you lookin for?">
+                    <button id="submit-button" type="submit" class="searchButton"><i class="fa fa-search"></i></button> -->
                     </div>
                 </div>
 
-                <div class="box login" data-anijs="if: load, on: window, do: rubberBand animated">bye</div>
+                <div class="box login" data-anijs="if: load, on: window, do: rubberBand animated" 
+                onclick="loginRedir();"
+                    style="cursor: pointer;">
+                    <div class="loginHeader">
+                        <div class="loginHeadername">Login</div>
+                    </div>
+                </div>
 
             </div>
         </div>
 
-        <div class="column right col-right" style="background-color:#ccc;"></div>
+        <div class="column right col-right" style="background-color:#ccc;">
+            <div class="colum right banner" id="right-banner"></div>
+        </div>
         </div>
 
         <div class="body"></div>
@@ -257,21 +301,44 @@
 
 
         <script>
-        let serachTerm_isopen = false;
+        function loginRedir(){
+            window.location.href = '/login';
+            console.log('login div is clicked!')
+        };
 
         function controlNav() {
-            let foundElem = document.getElementsByClassName("searchwrap");
-            console.log('foundElem :: ', foundElem);
+            let foundElemParent = document.getElementById("box-search");
+            let foundElemChild = document.getElementById("search-wrap");
+            let foundElemTarg_1 = document.getElementById("search-Term");
+            let foundElemTarg_2 = document.getElementById("submit-button");
 
-            if(serachTerm_isopen === false){
-                foundElem[0].style.width = "250px";
-                serachTerm_isopen = true;
+            console.log("foundElemTarg_1 ::: ", foundElemTarg_1);
+            
+
+            if(foundElemTarg_1 === null){
+                // <input type="text" id="search-Term" class="searchTerm" placeholder="What food are you lookin for?">
+                // <button type="submit" class="searchButton"><i class="fa fa-search"></i></button>              
+                
+                
+                let elemAdd_input = document.createElement("input");
+                elemAdd_input.setAttribute('type', "text");
+                elemAdd_input.setAttribute('id', "search-Term");
+                elemAdd_input.setAttribute('class', "searchTerm");
+                elemAdd_input.setAttribute('placeholder',"What food are you lookin for?");
+
+                let elemAdd_button = document.createElement("button");
+                elemAdd_button.setAttribute('type', "submit");
+                elemAdd_button.setAttribute('id', "submit-button");
+                elemAdd_button.setAttribute('class', "searchButton");
+
+                foundElemChild.appendChild(elemAdd_input);
+                foundElemChild.appendChild(elemAdd_button);
 
             }else{
-                foundElem[0].style.width = "0px";
-                serachTerm_isopen = false;           
+                foundElemTarg_1.parentNode.removeChild(foundElemTarg_1);
+                foundElemTarg_2.parentNode.removeChild(foundElemTarg_2);
             }
-            }
+        }
         </script>
     
     </body>

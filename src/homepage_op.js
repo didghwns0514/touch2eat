@@ -7,7 +7,13 @@
 // GENERAL SETTING
 window.sr = ScrollReveal({ reset: true });
 
-sr.reveal('')
+sr.reveal('.searchwrap', {
+
+  origin: 'right', 
+  duration: 2500,
+  scale:0.85,
+  reset:true,
+});
 
 
 // Custom Settings
