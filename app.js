@@ -1,5 +1,5 @@
 /*jslint node: true */
-"use strict";
+//"use strict";
 
 
 // wake up module for heroku
@@ -26,6 +26,8 @@ app.engine("html", require('ejs').renderFile);
 app.set('views', __dirname + '/views');
 app.use('/src', express.static(__dirname + "/src"));
 app.use('/images', express.static(__dirname + "/images"));
+app.use('/css', express.static(__dirname + "/css"));
+
 
 // google auth
 const session = require('express-session');
@@ -47,7 +49,7 @@ const homepage = require("./routes/homepage");
 //app.use("/homepage", homepage);
 app.get('/{1}', (req, res)=>{
   //res.send("you are at the init page")
-  res.redirect('/homepage')
+  res.redirect('/homepage');
 })
 app.use("/homepage", homepage);
 const login = require("./routes/login");

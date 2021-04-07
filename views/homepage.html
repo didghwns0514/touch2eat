@@ -8,7 +8,8 @@
 
 
     <!-- AniCollection.css library  rel="stylesheet"  -->
-    <link rel="stylesheet"  href="http://anijs.github.io/lib/anicollection/anicollection.css">
+    <!-- <link rel="stylesheet"  href="http://anijs.github.io/lib/anicollection/anicollection.css"> -->
+    <link rel="stylesheet" href="https://anijs.github.io/lib/anicollection/anicollection.css">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500&display=swap');
@@ -118,13 +119,13 @@
         }   
             .searchHeader{
                 background-color : rgba(13, 56, 45, 0.514);
-
+                width : 52px;
                 max-height : 80%;
                 border-top-left-radius:  10px;
                 border-bottom-left-radius: 10px;
-                -webkit-flex: 1;
+                /* -webkit-flex: 1;
                 -ms-flex: 1;
-                flex : 1;
+                flex : 1; */
 
             }
                 .searchHeader.name{
@@ -194,6 +195,26 @@
 
             }
 
+        .box.map{
+        background-color: var(--color-3);
+        display: -webkit-flex;
+        display: flex;
+        cursor: pointer;
+        }
+            .mapHeader{
+                background-color : rgba(13, 56, 45, 0.486);
+                width : 52px;
+                max-height : 90%;
+                border-top-left-radius:  10px;
+                border-bottom-left-radius: 10px;
+                margin: 6px 0 6px 18px;
+            }
+            .mapHeadername{
+                margin-top: 15px;
+                color:white;
+
+            }
+
         /* Style the footer */
         .footer {
             background-color: #f1f1f1;
@@ -227,6 +248,7 @@
     </style>
 </head>
     <body>
+
         <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/AniJS/0.9.3/anijs-min.js"></script>
@@ -267,14 +289,15 @@
                 <h2>CSS Template</h2>
                 <p>A topnav, content and a footer.</p>
                 -->
-                <div id="box-search" class="box search" data-anijs="if: load, on: window, do: rubberBand animated">
-                    <div class="searchHeader" onclick="controlNav()" >
+                <div id="box-search" class="box search" data-anijs="if: load, on: window, do: rubberBand animated" onclick="controlNav()">
+                    <div class="searchHeader">
                         <div class="searchHeader name">Search</div>
                     </div>
-                    <div id="search-wrap" class="searchwrap">
+                    <form id="search-wrap" class="searchwrap"
+                    action="/map/form" method="GET">
                     <!-- <input type="text" id="search-Term" class="searchTerm" placeholder="What food are you lookin for?">
                     <button id="submit-button" type="submit" class="searchButton"><i class="fa fa-search"></i></button> -->
-                    </div>
+                    </form>
                 </div>
 
                 <div class="box login" data-anijs="if: load, on: window, do: rubberBand animated" 
@@ -282,6 +305,14 @@
                     style="cursor: pointer;">
                     <div class="loginHeader">
                         <div class="loginHeadername">Login</div>
+                    </div>
+                </div>
+
+                <div class="box map" data-anijs="if: load, on: window, do: rubberBand animated" 
+                onclick="mapRedir();"
+                    style="cursor: pointer;">
+                    <div class="mapHeader">
+                        <div class="mapHeadername">Map</div>
                     </div>
                 </div>
 
@@ -305,6 +336,10 @@
             window.location.href = '/login';
             console.log('login div is clicked!')
         };
+        function mapRedir(){
+            window.location.href = '/map';
+            console.log('map div is clicked!')
+        };
 
         function controlNav() {
             let foundElemParent = document.getElementById("box-search");
@@ -315,7 +350,7 @@
             console.log("foundElemTarg_1 ::: ", foundElemTarg_1);
             
 
-            if(foundElemTarg_1 === null){
+            if(foundElemTarg_1 === null){ // not yet configured
                 // <input type="text" id="search-Term" class="searchTerm" placeholder="What food are you lookin for?">
                 // <button type="submit" class="searchButton"><i class="fa fa-search"></i></button>              
                 
@@ -326,17 +361,23 @@
                 elemAdd_input.setAttribute('class', "searchTerm");
                 elemAdd_input.setAttribute('placeholder',"What food are you lookin for?");
 
-                let elemAdd_button = document.createElement("button");
+                let elemAdd_button = document.createElement("input");
                 elemAdd_button.setAttribute('type', "submit");
                 elemAdd_button.setAttribute('id', "submit-button");
                 elemAdd_button.setAttribute('class', "searchButton");
+                elemAdd_button.setAttribute('value', "Now");
 
                 foundElemChild.appendChild(elemAdd_input);
                 foundElemChild.appendChild(elemAdd_button);
 
             }else{
+
+                if(document.activeElement === foundElemTarg_1 ||
+                   document.activeElement === foundElemTarg_2){ /* do nothing*/}
+                else{
                 foundElemTarg_1.parentNode.removeChild(foundElemTarg_1);
                 foundElemTarg_2.parentNode.removeChild(foundElemTarg_2);
+            }
             }
         }
         </script>

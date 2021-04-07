@@ -10,7 +10,7 @@
   "scripts": {
     "test": "runtouch2eat",
     "start": "node app.js",
-    "liveserver" : "nodemon app.js"
+    "liveserver": "nodemon app.js"
   },
   "repository": {
     "type": "git",

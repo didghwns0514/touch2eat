@@ -37,6 +37,13 @@ sr.reveal('.login', {
   
 });
 
+sr.reveal('.map', { 
+  origin: 'right', 
+  duration: 2000,
+  viewFactor: 0.5 
+  
+});
+
 sr.reveal('.searchwrap', { 
   origin: 'right', 
   duration: 3000,
