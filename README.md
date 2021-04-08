@@ -16,19 +16,16 @@ An webpage using Google maps API, places API to suggest you places to eat foods 
 
 ## Table of Contents
 
-*Note: This is only a navigation guide for the specification, and does not define or mandate terms for any specification-compliant documents.*
-
 - Sections
-  - [Touch2Eat](https://github.com/didghwns0514/touch2eat/blob/main/README.md###Touch2Eat)
-  - [Usage](https://github.com/didghwns0514/touch2eat/blob/main/README.md###Usage)
-  - [Maintainer(s)](https://github.com/didghwns0514/touch2eat/blob/main/README.md###Maintainer(s))
-
+  - [Touch2Eat](https://github.com/didghwns0514/touch2eat/blob/main/README.md#Touch2Eat)
+  - [Usage](https://github.com/didghwns0514/touch2eat/blob/main/README.md#Usage)
+  - [Maintainer(s)](https://github.com/didghwns0514/touch2eat/blob/main/README.md#Maintainer(s))
 
 ## Sections
 
 ### Touch2Eat
 
-**Status :** Live and destributed
+**Status :** Live and distributed
 
 **Link :** [(site Location)](https://touch2eat.herokuapp.com)
 
