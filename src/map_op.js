@@ -1,5 +1,9 @@
 const tmp_G = document.getElementById("needme");
 const GOOGLE_MAP_KEY = tmp_G.getAttribute("gk");
+
+let tmp_H = document.getElementById("needplacetosearch");
+let contentfromhomepage = tmp_H.getAttribute("gk");
+
 const defaultZoom = 16;
 let queryQueue = [];
 let markerQueue = [];
@@ -128,6 +132,23 @@ let app = {
       app.addMapListeners();
       app.getMapCenter();
       app.getRoute();
+
+      // deal with homepage requests
+      app.dealHomeRequest();
+    },
+
+    dealHomeRequest : function(){
+        console.log("dealHomeRequest");
+        console.log("request name : ", contentfromhomepage);
+
+        if(contentfromhomepage){ // if query exists
+            //alter homepage text search text session
+            let homepage_textarea = document.getElementById("nowsearchtext");
+            homepage_textarea.value = contentfromhomepage;
+
+            // run search request
+            app.runSearchRequest();
+        }
     },
 
     getRoute : function () {

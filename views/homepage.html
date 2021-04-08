@@ -281,7 +281,7 @@
                         <div class="searchHeader name">Search</div>
                     </div>
                     <form id="search-wrap" class="searchwrap"
-                    action="/map/form" method="GET">
+                    action="/map/form" method="post">
                     <!-- <input type="text" id="search-Term" class="searchTerm" placeholder="What food are you lookin for?">
                     <button id="submit-button" type="submit" class="searchButton"><i class="fa fa-search"></i></button> -->
                     </form>
@@ -348,6 +348,7 @@
                 let elemAdd_input = document.createElement("input");
                 elemAdd_input.setAttribute('type', "text");
                 elemAdd_input.setAttribute('id', "search-Term");
+                elemAdd_input.setAttribute('name', "placeToSearch");
                 elemAdd_input.setAttribute('class', "searchTerm");
                 elemAdd_input.setAttribute('placeholder',"What food are you lookin for?");
 

@@ -6,55 +6,46 @@
     <title>Touch2Eat - map page</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Roboto+Condensed&display=swap');
 
-        * {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            box-sizing: border-box;
-        }
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 98vh;
-            /* font-family: 'Roboto Condensed', sans-serif; */
-            font-family: 'M PLUS Rounded 1c', sans-serif;
+            font-family: 'Roboto Condensed', sans-serif;
             
         }
-
-        .content{
-            width: 0%;
-        }
-
         .split {
-            height: 100%;
-            width: 100%;
-            position: fixed;
-            /* z-index: 1; */
-            top: 0;
-            overflow-x: hidden;
-            padding-top: 20px;
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        /* z-index: 1; */
+        top: 0;
+        overflow-x: hidden;
+        padding-top: 20px;
         }
 
         /* Control the left side */
-        .split.up {
-            /* left: 0; */
-            top: 0%;
-            background-color: #111;
+        .up {
+        /* left: 0; */
+        top: 0%;
+        background-color: #111;
         }
 
         /* Control the right side */
-        .split.down {
-            /* right: 0; */
-            top: 20%;
-            background-color: rgb(173, 153, 153);
+        .down {
+        /* right: 0; */
+        top: 20%;
+        background-color: rgb(173, 153, 153);
         }
 
         /* If you want the content centered horizontally and vertically */
         .centered {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
         }
 
         #map {
@@ -67,98 +58,98 @@
 
         /* The sidebar menu */
         .sidebar {
-            height: 100%; /* 100% Full-height */
-            width: 0; /* 0 width - change this with JavaScript */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Stay on top */
-            top: 0;
-            left: 0;
-            background-color: #111; /* Black*/
-            overflow-x: hidden; /* Disable horizontal scroll */
-            padding-top: 60px; /* Place content 60px from the top */
-            transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+        height: 100%; /* 100% Full-height */
+        width: 0; /* 0 width - change this with JavaScript */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Stay on top */
+        top: 0;
+        left: 0;
+        background-color: #111; /* Black*/
+        overflow-x: hidden; /* Disable horizontal scroll */
+        padding-top: 60px; /* Place content 60px from the top */
+        transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
         }
 
         /* The sidebar links */
         .sidebar a {
-            padding: 8px 8px 8px 15px;
-            text-decoration: none;
-            font-size: 20px;
-            color: #818181;
-            display: block;
-            transition: 0.1s;
+        padding: 8px 8px 8px 15px;
+        text-decoration: none;
+        font-size: 20px;
+        color: #818181;
+        display: block;
+        transition: 0.1s;
         }
 
         /* When you mouse over the navigation links, change their color */
         .sidebar a:hover {
-            color: #f1f1f1;
+        color: #f1f1f1;
         }
 
         .sidebar a table{
-            padding: 4px 4px 4px 8px;
-            text-decoration: none;
-            font-size: 10px;
-            color: #818181;
+        padding: 4px 4px 4px 8px;
+        text-decoration: none;
+        font-size: 10px;
+        color: #818181;
         }
         .sidebar a table tr:hover{
-            color: #c23a3a;
+        color: #c23a3a;
         }
 
         /* Position and style the close button (top right corner) */
         .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
         }
 
         /* The button used to open the sidebar */
         .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #111;
-            color: white;
-            padding: 10px 15px;
-            border: none;
+        font-size: 20px;
+        cursor: pointer;
+        background-color: #111;
+        color: white;
+        padding: 10px 15px;
+        border: none;
         }
 
         .openbtn:hover {
-            background-color: #444;
+        background-color: #444;
         }
 
         /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
         #main {
-            transition: margin-left .5s; /* If you want a transition effect */
-            padding: 5px;
+        transition: margin-left .5s; /* If you want a transition effect */
+        padding: 5px;
         }
 
         /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
         @media screen and (max-height: 450px) {
-            .sidebar {padding-top: 15px;}
-            .sidebar a {font-size: 18px;}
+        .sidebar {padding-top: 15px;}
+        .sidebar a {font-size: 18px;}
         }
 
         .vanillabutton {
-            /* display: block; */
-            width: 120px;
-            border: none;
-            background-color:midnightblue;
-            color:rgb(241, 238, 238);
-            padding: 5px 5px;
-            font-size: 12px;
-            cursor: pointer;
-            text-align: center;
+        /* display: block; */
+        width: 120px;
+        border: none;
+        background-color:midnightblue;
+        color:rgb(241, 238, 238);
+        padding: 5px 5px;
+        font-size: 12px;
+        cursor: pointer;
+        text-align: center;
         }
 
         .vanillabutton:hover {
-            /* display: block; */
-            background-color:rgb(197, 118, 28);
-            color:rgb(14, 2, 2);
+        /* display: block; */
+        background-color:rgb(197, 118, 28);
+        color:rgb(14, 2, 2);
         }
         
         #myTravelMethod{
-            width: 120px;
+        width: 120px;
         }
 
         /* .dropbtn {
@@ -191,18 +182,21 @@
 <body>
 
 <!-- Load icon library -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<div id="mySidebar" class="sidebar">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <a id="SimpleFilter" href="#">Suggetsions filtered</a>
-</div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="#">Suggestions For Me</a>
+        <a id="SimpleFilter" href="#">Simple Suggetsions by Filter</a>
+        <a href="#">About & Contact</a>
+    </div>
     
 
+    
     <div class="split up">
 
 
         <div id="main">
-            <button class="openbtn" onclick="openNav()">&#9776; Search Results</button>
+            <button class="openbtn" onclick="openNav()">&#9776; Detail of Search Results</button>
             <button id="homebutton" onclick="location.href = '/homepage'">
                 <img src="/images/homebutton.png" type="png", width="12", height="12">
             </img></button>
