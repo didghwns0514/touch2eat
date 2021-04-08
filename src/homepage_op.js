@@ -46,15 +46,15 @@ sr.reveal('.map', {
 
 sr.reveal('.searchwrap', { 
   origin: 'right', 
-  duration: 3000,
+  duration: 2100,
   viewFactor: 0.5 
   
 });
 
 sr.reveal('.footer', { 
   origin: 'top', 
-  duration: 3000,
-  viewFactor: 0.7 
+  duration: 2100,
+  viewFactor: 0.5 
   
 });
 
