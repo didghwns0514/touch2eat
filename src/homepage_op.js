@@ -51,12 +51,19 @@ sr.reveal('.searchwrap', {
   
 });
 
-sr.reveal('.fotter a1', { 
+sr.reveal('.footer', { 
   origin: 'top', 
   duration: 3000,
   viewFactor: 0.7 
   
 });
+
+// sr.reveal('.footer', { 
+//   origin: 'top', 
+//   duration: 3000,
+//   viewFactor: 0.7 
+  
+// });
 
 // sr.reveal('.foo-3', { 
 //   rotate: { x: 100, y: 100, z: 0 },
