@@ -34,6 +34,7 @@ router
     .get((req, res, next)=>{
         //return res.render('map.html',{googlemapkey:GOOGLE_MAP_KEY});
         console.log('in the map root page!');
+        contentFromHomepage = null;
         return res.render('wait.html', {info_disp: `Now taking you to map page...`, redirect:"/map/real"});
     });
 
@@ -56,10 +57,15 @@ router
     .get((req, res, next)=>{
       console.log('inside /map/real page!');
       //console.log('req from homepage : ', req);
-      return res.render('map.html',{
+
+      let container = {
         googlemapkey:GOOGLE_MAP_KEY,
         placeToSearch:contentFromHomepage
-      });
+      };
+
+      contentFromHomepage = null;
+
+      return res.render('map.html',container);
     });
 
 module.exports = router;

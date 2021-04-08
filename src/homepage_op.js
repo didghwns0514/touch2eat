@@ -51,6 +51,13 @@ sr.reveal('.searchwrap', {
   
 });
 
+sr.reveal('.fotter', { 
+  origin: 'top', 
+  duration: 4000,
+  viewFactor: 0.7 
+  
+});
+
 // sr.reveal('.foo-3', { 
 //   rotate: { x: 100, y: 100, z: 0 },
 //   duration: 1000,
