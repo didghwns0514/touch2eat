@@ -1,8 +1,87 @@
-# touch2eat
-map API in frontend with node.js / spring backend for suggesting dinning places
+# -Touch2Eat-
 
-## Frontend
-- main server : node.js Express
-- for view : routers for multiple pages
-- google map API
+An webpage using Google maps API, places API to suggest you places to eat foods based on your current location.
 
+> Compatability checked with PC Chrome browser.
+>
+> Distributed using heroku.
+>
+> To check out the webpage, click the following [(site Location)](https://touch2eat.herokuapp.com).
+
+**Framework & library used :**
+
+- Frontend : CSS, HTML, Javascript
+- Server : Node.js Express
+- Google login Authentication : Passport-google-oauth20, passport(cookie)
+
+## Table of Contents
+
+*Note: This is only a navigation guide for the specification, and does not define or mandate terms for any specification-compliant documents.*
+
+- Sections
+  - [Touch2Eat](https://github.com/didghwns0514/touch2eat/blob/main/README.md###Touch2Eat)
+  - [Usage](https://github.com/didghwns0514/touch2eat/blob/main/README.md###Usage)
+
+## Sections
+
+------
+
+### Touch2Eat
+
+**Status :** Live and destributed
+
+**Link :** [(site Location)](https://touch2eat.herokuapp.com)
+
+**Used :**
+
+- Frontend
+  
+  - HTML, JavaScript
+  - CSS : Responsive layout
+  - CDN : anijs-min.js, scrollreveal.js ( for dynamic front page )
+
+- Backend
+  - node.js : package described ([link Location](https://github.com/didghwns0514/touch2eat/blob/main/package.json)) \
+  `Express` for starting the server \
+  `Router` and `index` to render html on client side request
+  
+  - Database \
+    ※ tobe added in the future, using either JavaSpring or Express  \
+    to track personal preference of the dinning places
+
+- Map page
+  - `Google Map api` and `Google Place api`
+  - Datas including API are rendered in the client side \
+    ( due to geolocation usage and light-weight-filtering function )
+
+-----------
+
+### Usage
+
+**Simple usage :**
+
+- gif \
+  ![image](https://user-images.githubusercontent.com/47662495/113975634-c4caf700-987a-11eb-862b-5427480bd46b.gif)
+
+-----------
+
+### Maintainer(s)
+
+**People**: Yang HoJun(양호준)(didghwns0514@gmail.com)
+
+**More Info:**
+
+- Github link : [Link](https://github.com/didghwns0514/touch2eat)
+- Personal Blog : [Link](https://korshika.tistory.com/)
+
+**Suggestions:**
+
+- Feel free to contact
+
+-----------
+
+## Definitions
+
+*These definitions are provided to clarify any terms used above.*
+
+- **Documentation repositories**: Feel free to share. Thank you!

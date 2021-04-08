@@ -604,7 +604,7 @@ let app = {
             map: app.map,
             draggable: true,
             icon: {
-                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                url: "/images/black-48dp/1x/outline_place_black_48dp.png"
               },
             position: {
             lat: ev.latLng.lat(),
