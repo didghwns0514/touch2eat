@@ -215,10 +215,23 @@
             }
 
         /* Style the footer */
-        .footer {
-            background-color: #f1f1f1;
+        .footer{
+            margin: 20px;
+            height: 200px;
+        }
+        .footer.a1 {
+            background-color: #d49393ad;
             padding: 10px;
             text-align: center;
+            border-radius: 10px;
+        }
+
+        .footer.a2 {
+            background-color: #f1f1f1;
+            padding: 10px;
+            padding-top: 50px;
+            text-align: center;
+            border-radius: 10px;
         }
 
         /* Responsive layout - makes the three columns stack on top of each other instead of next to each other when row is shorter than 600px */
@@ -313,7 +326,12 @@
 
         <div class="body"></div>
 
-        <div class="footer">
+        <div class="footer a1" data-anijs="if: scroll, on: footer a1, to: footer a2">
+            <p style="padding-top: 30px;">For Usage Explain</p>
+            <a href="https://github.com/didghwns0514/touch2eat/blob/main/README.md#Usage">Link</a>
+        </div>
+
+        <div class="footer a2">
             <p>Contact</p>
             <p>didghwns0514@gmail.com</p>
         </div>

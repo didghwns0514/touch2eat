@@ -51,9 +51,9 @@ sr.reveal('.searchwrap', {
   
 });
 
-sr.reveal('.fotter', { 
+sr.reveal('.fotter a1', { 
   origin: 'top', 
-  duration: 4000,
+  duration: 3000,
   viewFactor: 0.7 
   
 });
