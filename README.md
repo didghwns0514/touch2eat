@@ -21,10 +21,10 @@ An webpage using Google maps API, places API to suggest you places to eat foods 
 - Sections
   - [Touch2Eat](https://github.com/didghwns0514/touch2eat/blob/main/README.md###Touch2Eat)
   - [Usage](https://github.com/didghwns0514/touch2eat/blob/main/README.md###Usage)
+  - [Maintainer(s)](https://github.com/didghwns0514/touch2eat/blob/main/README.md###Maintainer(s))
+
 
 ## Sections
-
-------
 
 ### Touch2Eat
 
