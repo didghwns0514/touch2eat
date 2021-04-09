@@ -35,9 +35,9 @@ const passport = require('passport');
 require('./routes/passport-setup')(passport);
 
 app.use(session({ secret: 'SECRET_CODE', 
-                  cookie: { maxAge: 60 * 1000 },
-                  resave: true, 
-                  saveUninitialized: false }));
+                  cookie: { maxAge: 10 * 60 * 1000 },
+                  resave: false, //overrride existing login session
+                  saveUninitialized: false })); // put empty value when there is no session?
 app.use(passport.initialize());
 app.use(passport.session());
 
