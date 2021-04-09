@@ -13,23 +13,19 @@
         }
         body {
             display: flex;
-            /*justify-content: center;*/
-            /*align-items: center;*/
+            justify-content: center;
+            align-items: center;
             min-height: 98vh;
             /* font-family: 'Roboto Condensed', sans-serif; */
             font-family: 'M PLUS Rounded 1c', sans-serif;
             
         }
-        
-        .col{
-            display: -webkit-flex;
-            display: flex;
-            flex-direction:column;
-            background-color: black;
+
+        .content{
+            width: 0%;
         }
 
-
-        /*.split {
+        .split {
             height: 100%;
             width: 100%;
             position: fixed;
@@ -37,27 +33,20 @@
             top: 0;
             overflow-x: hidden;
             padding-top: 20px;
-        }*/
+        }
 
         /* Control the left side */
         .split.up {
             /* left: 0; */
-            /* top: 0%; */
-            height:100px;
+            top: 0%;
             background-color: #111;
-            -webkit-flex: 2;
-            -ms-flex: 2;
-            flex: 2;
         }
 
         /* Control the right side */
         .split.down {
             /* right: 0; */
-            /*top: 20%;*/
+            top: 20%;
             background-color: rgb(173, 153, 153);
-            -webkit-flex: 8;
-            -ms-flex: 8;
-            flex: 8;
         }
 
         /* If you want the content centered horizontally and vertically */
@@ -203,15 +192,15 @@
 
 <!-- Load icon library -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    
-<div class="col">
 <div id="mySidebar" class="sidebar">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a id="SimpleFilter" href="#">Suggetsions filtered</a>
 </div>
+    
 
     <div class="split up">
+
+
         <div id="main">
             <button class="openbtn" onclick="openNav()">&#9776; Search Results</button>
             <button id="homebutton" onclick="location.href = '/homepage'">
@@ -258,7 +247,7 @@
     <div class="split down" class="centered">
         <div id="map"></div>
     </div>
-</div>     
+    
 
     <script>
         /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */

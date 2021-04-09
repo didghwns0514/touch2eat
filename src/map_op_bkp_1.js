@@ -49,9 +49,8 @@ let app = {
         let options = {
           enableHighAccuracy: true,
           timeout: 3000, //3secs
-          maximumAge: 1000 //1secs
+          maximumAge: 1000 //2secs
         };
-
         navigator.geolocation.getCurrentPosition(
           app.gotPosition,
           app.failPosition,
@@ -84,7 +83,6 @@ let app = {
     
     gotPosition: function(position) {
       console.log("gotPosition", position.coords);
-      console.log("type of callback param : ", typeof position);
       app.currLoc = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
@@ -377,7 +375,7 @@ let app = {
             // console.log(ev.path);
             // console.log(typeof ev.path);
             // console.log(typeof ev.path[1]);
-            console.log('mapper properly attached : ',ev.path[1].id);
+            console.log(ev.path[1].id);
 
             let placeindex = null;
             for(var t=0; t<markerQueue.length; t++){
@@ -387,9 +385,7 @@ let app = {
                 }
             }
 
-            console.log('placeindex :: ', placeindex);
-
-            if(placeindex !== null){
+            if(placeindex){
                 if(app.currentInfoWindw !== null){
                     console.log("loadPlaceMarkerInfo - destroy");
                     app.currentInfoWindw.close();
