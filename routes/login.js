@@ -43,8 +43,10 @@ module.exports = function(app, passport) {
     .route('/google')
     .get( (req, res, next) =>{
       if(req.isAuthenticated()){
+        console.log('client is already logged in!');
         return res.render('wait.html', {info_disp: `You have already logged in, user ${req.user.displayName}!!`, redirect:"/homepage"});
       }else{
+        console.log('taking the client to the login page!');
         passport.authenticate('google', { scope: ['profile'] }); 
       }
     });
