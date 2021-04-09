@@ -29,7 +29,14 @@ module.exports = function(app, passport) {
     .get((req, res, next) => {
       console.log('r-1');
       //res.redirect('/login/google');
-      return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/google"});
+      //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/google"});
+      return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/loginpage"});
+    });
+
+  router
+    .route('/loginpage')
+    .get((req, res, next)=>{
+
     });
 
   router
@@ -64,13 +71,14 @@ module.exports = function(app, passport) {
     .get((req, res) => {
         if(req.session){ // session exists
           console.log("your session exists");
+          let name = req.user.displayName;
           req.session = null;
           req.logout();
           //res.redirect('/homepage');
-          return res.render('wait.html', {info_disp: `User ${req.user.displayName} is logged out!`, redirect:"/homepage"});
+          return res.render('wait.html', {info_disp: `User ${name} is logged out!`, redirect:"/homepage"});
         }else{
           console.log("your session does not exist");
-          return res.render('wait.html', {info_disp: `User ${req.user.displayName} you havent logged in!`, redirect:"/homepage"});
+          return res.render('wait.html', {info_disp: `You havent logged in yet!`, redirect:"/homepage"});
         }
       });
   

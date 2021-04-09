@@ -35,9 +35,15 @@ const passport = require('passport');
 require('./routes/passport-setup')(passport);
 
 app.use(session({ secret: 'SECRET_CODE', 
+                  httpOnly:true, // disallow JS approchable cookie
+                  secure: true, // session is transfered in https environment, only
                   cookie: { maxAge: 10 * 60 * 1000 },
                   resave: false, //overrride existing login session
-                  saveUninitialized: false })); // put empty value when there is no session?
+                  saveUninitialized: false ,
+                  cookie: {	//session
+                    httpOnly: true,
+                    secure: true
+                  }})); // put empty value when there is no session?
 app.use(passport.initialize());
 app.use(passport.session());
 
