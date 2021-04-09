@@ -29,19 +29,25 @@ module.exports = function(app, passport) {
     .get((req, res, next) => {
       console.log('r-1');
       //res.redirect('/login/google');
-      //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/google"});
-      return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/loginpage"});
+      return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/google"});
+      //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/loginpage"});
     });
 
-  router
-    .route('/loginpage')
-    .get((req, res, next)=>{
-      return res.render('login.html');
-    });
+  // router
+  //   .route('/loginpage')
+  //   .get((req, res, next)=>{
+  //     return res.render('login.html');
+  //   });
 
   router
     .route('/google')
-    .get( passport.authenticate('google', { scope: ['profile'] }) );
+    .get( (req, res, next) =>{
+      if(req.isAuthenticated()){
+        return res.render('wait.html', {info_disp: `You have already logged in, user ${req.user.displayName}!!`, redirect:"/homepage"});
+      }else{
+        passport.authenticate('google', { scope: ['profile'] }); 
+      }
+    });
 
   router
     .route('/google/callback')
@@ -72,9 +78,18 @@ module.exports = function(app, passport) {
         if(req.session){ // session exists
           console.log("your session exists");
           let name = req.user.displayName;
-          req.session = null;
-          req.logout();
-          //res.redirect('/homepage');
+
+          // remove session
+          req.session.destroy(err => {
+            if(err) throw err;
+            try{
+              req.session = null;
+              req.logout();
+            } catch(error){
+              console.error(error);
+            }
+          })
+
           return res.render('wait.html', {info_disp: `User ${name} is logged out!`, redirect:"/homepage"});
         }else{
           console.log("your session does not exist");
