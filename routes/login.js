@@ -62,9 +62,14 @@ module.exports = function(app, passport) {
   router
     .route('/logout')
     .get((req, res) => {
+        if(req.session){ // session exists
           req.session = null;
           req.logout();
-          res.redirect('/homepage');
+          //res.redirect('/homepage');
+          return res.render('wait.html', {info_disp: `User ${req.user.displayName} is logged out!`, redirect:"/homepage"});
+        }else{
+          return res.render('wait.html', {info_disp: `User ${req.user.displayName} you havent logged in!`, redirect:"/homepage"});
+        }
       });
   
   return router;
