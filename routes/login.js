@@ -57,7 +57,7 @@ module.exports = function(app, passport) {
       return passport.authenticate('google', {
       failureRedirect: '/login/fail/',
       successRedirect: '/login/success/'});
-    )};
+    });
 
 
   router
