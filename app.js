@@ -35,7 +35,7 @@ const passport = require('passport');
 require('./routes/passport-setup')(passport);
 
 app.use(session({ secret: 'SECRET_CODE', 
-                  cookie: { maxAge: 60 * 60 * 1000 },
+                  cookie: { maxAge: 60 * 1000 },
                   resave: true, 
                   saveUninitialized: false }));
 app.use(passport.initialize());

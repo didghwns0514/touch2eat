@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko">
+<!--<html lang="ko">-->
+<html> 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -194,6 +195,27 @@
 
             }
 
+
+        .box.logout{
+            background-color: var(--color-3);
+            display: -webkit-flex;
+            display: flex;
+            cursor: pointer;
+        }
+            .logoutHeader{
+                background-color : rgba(13, 56, 45, 0.486);
+                width : 52px;
+                max-height : 90%;
+                border-top-left-radius:  10px;
+                border-bottom-left-radius: 10px;
+                margin: 6px 0 6px 18px;
+            }
+            .logoutHeadername{
+                margin-top: 15px;
+                color:white;
+
+            }
+
         .box.map{
         background-color: var(--color-3);
         display: -webkit-flex;
@@ -278,10 +300,10 @@
 
             <div class="header">
             <h2>
-                Search For Places to EAT
+                Search For Food you want to EAT
             </h2>
             <p>
-                Click search button to search your food!
+                Click search button and type your food!
             </p>
             <p>
                 Login to your Google account for more accurate search results!
@@ -305,6 +327,14 @@
                     style="cursor: pointer;">
                     <div class="loginHeader">
                         <div class="loginHeadername">Login</div>
+                    </div>
+                </div>
+
+                <div class="box logout" data-anijs="if: load, on: window, do: rubberBand animated" 
+                onclick="logoutRedir();"
+                    style="cursor: pointer;">
+                    <div class="logoutHeader">
+                        <div class="logoutHeadername">Logout</div>
                     </div>
                 </div>
 
@@ -343,6 +373,13 @@
             window.location.href = '/login';
             console.log('login div is clicked!')
         };
+
+        // logout redirection link
+        function logoutRedir(){
+            window.location.href = '/login/logout';
+            console.log('logout div is clicked!')
+        };
+
         // map redirection link
         function mapRedir(){
             window.location.href = '/map';
@@ -375,7 +412,7 @@
                 elemAdd_button.setAttribute('type', "submit");
                 elemAdd_button.setAttribute('id', "submit-button");
                 elemAdd_button.setAttribute('class', "searchButton");
-                elemAdd_button.setAttribute('value', "Now");
+                elemAdd_button.setAttribute('value', "Click");
 
                 foundElemChild.appendChild(elemAdd_input);
                 foundElemChild.appendChild(elemAdd_button);
