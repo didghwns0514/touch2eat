@@ -82,7 +82,7 @@ module.exports = function(app, passport) {
   router
     .route('/logout')
     .get((req, res) => {
-        if(req.session){ // session exists
+        if(req.isAuthenticated()){ // session exists
           console.log("your session exists");
           let name = req.user.displayName;
 
