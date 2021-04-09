@@ -11,6 +11,7 @@ dotenv.config({
 
 const HIDDEN_clientID = process.env.HIDDEN_clientID;
 const HIDDEN_clientSecret =  process.env.HIDDEN_clientSecret;
+const CALLBACKURL = process.env.CALLBACKURL;
 
 // Use the GoogleStrategy within Passport.
 //   Strategies in passport require a `verify` function, which accept
@@ -33,8 +34,9 @@ module.exports = function(passport){
   passport.use(new GoogleStrategy({
       clientID : HIDDEN_clientID,
       clientSecret: HIDDEN_clientSecret,
-      //callbackURL : "http://localhost:10040/login/google/callback"
-      callbackURL: "https://touch2eat.herokuapp.com/login/google/callback"
+      callbackURL : CALLBACKURL
+      // callbackURL : "http://localhost:10040/login/google/callback"
+      //callbackURL: "https://touch2eat.herokuapp.com/login/google/callback"
     },
     function(accessToken, refreshToken, profile, done) {
         // if you want to add DB use profile.id to match agains db

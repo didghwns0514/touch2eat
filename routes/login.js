@@ -58,11 +58,10 @@ module.exports = function(app, passport) {
 
   router
     .route('/google/callback')
-    .get((req, res, next)=> {
-      return passport.authenticate('google', {
+    .get(
+      passport.authenticate('google', {
       failureRedirect: '/login/fail/',
-      successRedirect: '/login/success/'});
-    });
+      successRedirect: '/login/success/'}))
 
 
   router
