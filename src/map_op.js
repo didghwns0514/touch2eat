@@ -13,6 +13,7 @@ let firstPosSmph = false;
 
 
 let app = {
+    /**make the app object */
     map: null,
     currentMarker: null,
     currentLocMarker : null,
@@ -23,8 +24,8 @@ let app = {
     currServiceDirection : null,
     defaultPos: { //default location to use if geolocation fails
       coords: {
-        latitude: 45.555,
-        longitude: -75.555
+        latitude: 37.541,
+        longitude: 126.986
       },
     }, 
     init: function() {
@@ -78,11 +79,12 @@ let app = {
         for(var i=0; i<directionQueue.length;i++){
             directionQueue[i].setMap(null);
         }
-        directionQueue = []; // reset marker container        
+        directionQueue = []; // reset direction container        
 
     },
     
     gotPosition: function(position) {
+        /** get the current position and create the Google map element */
       console.log("gotPosition", position.coords);
       console.log("type of callback param : ", typeof position);
       app.currLoc = {
@@ -90,6 +92,7 @@ let app = {
         longitude: position.coords.longitude
       };
       //build the map - we have deviceready, google script, and geolocation coords
+      // set options for the google map
       app.map = new google.maps.Map(document.getElementById("map"), {
         zoom: defaultZoom,
         // zoom: 16,
@@ -125,12 +128,13 @@ let app = {
         },
         rotateControl: true
     });
+
       //set map center after load
       let center = app.map.getCenter();
       app.currMapCenter.latitude = center.lat();
       app.currMapCenter.longitude = center.lng();      
 
-      //add map event listeners
+      //add direct map event listeners and other listeners from map.html
       app.addMapListeners();
       app.getMapCenter();
       app.getRoute();
@@ -192,6 +196,10 @@ let app = {
     },
 
     runSearchRequest : function(){
+        /** Function to handle place search request made from client side 
+         * Using Google Place API
+         * Recursive and callbacks
+        */
         console.log("runSearchRequest");
         queryQueue = []; // reset query results object container
 
@@ -209,7 +217,6 @@ let app = {
         app.addMarker(ev);
         
 
-        //define function for loop
         let functionReuquest = (in_request) => {
 
             let request = in_request;// get request when called
@@ -218,6 +225,7 @@ let app = {
             currServicePlace.textSearch(request, (results, status, next_page_token) =>{
             //service.findPlaceFromQuery(request, (results, status) =>{
             //service.nearbySearch(request, (results, status) =>{
+            /** here, only textSearch will return Broad search results */
                 console.log("results :: ", results);
                 console.log("status :: ", status);
                 console.log("next_page_token :: ", next_page_token);
@@ -228,7 +236,6 @@ let app = {
                     
                     for(var i =0; i<results.length; i++){
                         let place = results[i];
-                        // console.log(i+1, results[i]);
                         
                         let duplicateFound = false;
                         for(var j=0; j < queryQueue.length; j++){
@@ -245,19 +252,17 @@ let app = {
                     }
                     console.log('next_page_token : ', next_page_token);
                     console.log('next_page_token.o : ', next_page_token.o);
-                    // console.groupEnd();
-                    
-                    //return next_page_token;
-                    //resolve(next_page_token);
+
+
                     if(next_page_token){
                         let subreqest = {
                             pagetoken:next_page_token.o,
                             query:request.query,
-                        }
-                        //request.pagetoken = next_page_token.o;
+                        };
+                        // recursive calling
                         functionReuquest(subreqest);
                     }else{
-
+                        // will not be reached, PlacesServiceStatus === NOK
                     }
                 }else{
                     console.log("queryQueue : ", queryQueue);
@@ -286,10 +291,6 @@ let app = {
             alert('no valid search input... Please retry!');
         }
 
-        //next page token
-        let nextPageToken = null;
-        let nextPageSemephore = false;
-
 
         let request ={
                 location: new google.maps.LatLng(app.currMapCenter.latitude, app.currMapCenter.longitude),
@@ -301,16 +302,13 @@ let app = {
             };
 
         
-
-        //nextPageToken = functionReuquest(request);
         functionReuquest(request);
 
     },
     updateTable : function(){
+        /** Updating clientside table */
         console.group("UPDATE TABLE!");
 
-        //app.currentLocMarker : app.currentLocMarker.position.lat(), app.currentLocMarker.position.lng()
-        // app.currentLocMarker == null :: app.currLoc.latitude,  app.currLoc.longitude;
 
         let setPoint = null;
         if(app.currentLocMarker == null){
@@ -325,6 +323,7 @@ let app = {
             };
         }
 
+        // comparing function for lising up
         let compareFunction = (a, b)=>{
             let tmpA = (a.rating * Math.sqrt(a.user_ratings_total))/Math.pow(Math.hypot(a.geometry.location.lat()-setPoint.lat, a.geometry.location.lng()-setPoint.lng),1); // (a.price_level + 1);
             let tmpB = (b.rating * Math.sqrt(b.user_ratings_total))/Math.pow(Math.hypot(b.geometry.location.lat()-setPoint.lat, b.geometry.location.lng()-setPoint.lng),1); // (b.price_level + 1);
@@ -335,7 +334,7 @@ let app = {
         }
 
         let targetToCreate = document.getElementById("SimpleFilter");
-        //let s = document.createElement("script");
+
 
         // set table element
         let table = document.createElement("table");
@@ -382,6 +381,7 @@ let app = {
 
     },
     deleteTable : function(){
+        /** delete tables since its now not needed */
         console.log("DELETE TABLE!");
         let elem = document.getElementById("SFid");
         if(elem){elem.parentNode.removeChild(elem);}
@@ -389,11 +389,7 @@ let app = {
     },
 
     mapFromTable : function(ev){
-
-            // console.log(ev);
-            // console.log(ev.path);
-            // console.log(typeof ev.path);
-            // console.log(typeof ev.path[1]);
+        /** Activate map markers from table row click */
             console.log('mapper properly attached : ',ev.path[1].id);
 
             let placeindex = null;
@@ -418,6 +414,7 @@ let app = {
     },
 
     addPlaceMarker: function(result){
+        /** add place markers into array container(returns Marker Object) */
         console.log("addPlaceMarker");
         let marker = new google.maps.Marker({
         //let place_marker = new google.maps.Marker({
@@ -437,6 +434,7 @@ let app = {
     },
 
     addPlaceMarkerClick : function(ev){
+        /** function callback on event when marker is clicked */
         console.log("addPlaceMarkerClick", ev);
         console.log(this);
         if(app.currentMarker === null){
@@ -454,7 +452,7 @@ let app = {
     },
 
     findRoutetoPlace : function(){
-
+        /** find routes from curr position to selected marker */
         // init existing routes
         app.directionQueueClear();
 
@@ -559,6 +557,7 @@ let app = {
     },
 
     loadPlaceMarkerInfo : function(){
+        /**when marker is clicked, load information on the marker using API InfoWindow */
         console.log("loadPlaceMarkerInfo");
 
         if(app.currentMarker !== null){
@@ -616,6 +615,7 @@ let app = {
     },
 
     addMapListeners: function() {
+      /** double click on map, adds current position marker */
       console.log("addMapListeners");
       //add double click listener to the map object
 
@@ -623,6 +623,7 @@ let app = {
 
     },
     addMarker: function(ev) {
+      /** function that adds marker to map */
       console.log("addMarker", ev);
       console.log("app.currentLocMarker before :: ", app.currentLocMarker);
       

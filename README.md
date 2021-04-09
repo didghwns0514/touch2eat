@@ -58,7 +58,7 @@ An webpage using Google maps API, places API to suggest you places to eat foods 
 **Simple usage :**
 
 - gif \
-  ![image](https://user-images.githubusercontent.com/47662495/113975634-c4caf700-987a-11eb-862b-5427480bd46b.gif)
+  ![image](https://user-images.githubusercontent.com/47662495/114208146-23d25e00-9998-11eb-8375-45e359059711.gif)
 
 -----------
 
