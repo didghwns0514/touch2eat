@@ -47,17 +47,17 @@ module.exports = function(app, passport) {
         return res.render('wait.html', {info_disp: `You have already logged in, user ${req.user.displayName}!!`, redirect:"/homepage"});
       }else{
         console.log('taking the client to the login page!');
-        passport.authenticate('google', { scope: ['profile'] }); 
+        return passport.authenticate('google', { scope: ['profile'] }); 
       }
     });
 
   router
     .route('/google/callback')
-    .get(
-      passport.authenticate('google', {
+    .get((req, res, next)=> {
+      return passport.authenticate('google', {
       failureRedirect: '/login/fail/',
-      successRedirect: '/login/success/'})
-    );
+      successRedirect: '/login/success/'});
+    )};
 
 
   router
