@@ -134,9 +134,22 @@ let app = {
       app.addMapListeners();
       app.getMapCenter();
       app.getRoute();
+      app.addSubmitListener();
 
       // deal with homepage requests
       app.dealHomeRequest();
+    },
+
+    addSubmitListener : function() {
+        let submit_elem = document.getElementById("submit_form");
+        let textarea = document.getElementById("nowsearchtext");
+        const funcCaptureAction = function(){
+            if((window.event.keyCode === 13 ) && (document.activeElement === textarea)){
+                app.runSearchRequest();
+            }
+        }
+
+        submit_elem.addEventListener("keypress", funcCaptureAction, {capture:true});
     },
 
     dealHomeRequest : function(){
@@ -268,6 +281,10 @@ let app = {
 
         let searchQuery = document.getElementById("nowsearchtext").value;
         console.log('searchQuery value : ', searchQuery);
+
+        if(!(searchQuery)){
+            alert('no valid search input... Please retry!');
+        }
 
         //next page token
         let nextPageToken = null;
