@@ -28,7 +28,7 @@ module.exports = function(app, passport) {
     .route('/')
     .get((req, res, next) => {
       console.log('r-1');
-      res.redirect('/login/google');
+      res.redirect('/login/checkAuth');
       //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/google"});
       //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/loginpage"});
     });
@@ -40,16 +40,21 @@ module.exports = function(app, passport) {
   //   });
 
   router
-    .route('/google')
+    .route('/checkAuth')
     .get( (req, res, next) =>{
       if(req.isAuthenticated()){
         console.log('client is already logged in!');
         return res.render('wait.html', {info_disp: `You have already logged in, user ${req.user.displayName}!!`, redirect:"/homepage"});
       }else{
         console.log('taking the client to the login page!');
-        return passport.authenticate('google', { scope: ['profile'] }); 
+        res.redirect('/login/google');
+        return ; 
       }
     });
+
+  router
+    .route('/google')
+    .get(passport.authenticate('google', { scope: ['profile'] }));
 
   router
     .route('/google/callback')
