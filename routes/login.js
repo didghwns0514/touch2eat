@@ -63,11 +63,13 @@ module.exports = function(app, passport) {
     .route('/logout')
     .get((req, res) => {
         if(req.session){ // session exists
+          console.log("your session exists");
           req.session = null;
           req.logout();
           //res.redirect('/homepage');
           return res.render('wait.html', {info_disp: `User ${req.user.displayName} is logged out!`, redirect:"/homepage"});
         }else{
+          console.log("your session does not exist");
           return res.render('wait.html', {info_disp: `User ${req.user.displayName} you havent logged in!`, redirect:"/homepage"});
         }
       });
