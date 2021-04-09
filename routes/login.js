@@ -28,8 +28,8 @@ module.exports = function(app, passport) {
     .route('/')
     .get((req, res, next) => {
       console.log('r-1');
-      //res.redirect('/login/google');
-      return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/google"});
+      res.redirect('/login/google');
+      //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/google"});
       //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/loginpage"});
     });
 
