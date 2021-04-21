@@ -4,9 +4,9 @@
 
 // wake up module for heroku
 const https = require("https");
-setInterval(function(){
-  https.get("https://touch2eat.herokuapp.com/");
-}, 600000); // every 10 minutes
+// setInterval(function(){
+//   https.get("https://touch2eat.herokuapp.com/");
+// }, 600000); // every 10 minutes
 
 // start express
 const express = require("express");
