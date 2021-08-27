@@ -1,7 +1,6 @@
 /*jslint node: true */
 //"use strict";
 
-
 // wake up module for heroku
 const https = require("https");
 // setInterval(function(){
@@ -19,61 +18,60 @@ const PORT = process.env.PORT || loc_PORT; // heroku port
 // App setters
 app.set("port", PORT);
 
-app.set('view engine', 'ejs');
-app.engine("html", require('ejs').renderFile);
+app.set("view engine", "ejs");
+app.engine("html", require("ejs").renderFile);
 
 // set file locations
-app.set('views', __dirname + '/views');
-app.use('/src', express.static(__dirname + "/src"));
-app.use('/images', express.static(__dirname + "/images"));
-app.use('/css', express.static(__dirname + "/css"));
-
+app.set("views", __dirname + "/views");
+app.use("/src", express.static(__dirname + "/src"));
+app.use("/images", express.static(__dirname + "/images"));
+app.use("/css", express.static(__dirname + "/css"));
 
 // google auth
-const session = require('express-session');
-const FileStore = require('session-file-store')(session)
-const passport = require('passport');
-require('./routes/passport-setup')(passport);
+const session = require("express-session");
+const FileStore = require("session-file-store")(session);
+const passport = require("passport");
+require("./routes/passport-setup")(passport);
 
-app.use(session({ secret: 'SECRET_CODE', 
-                  // httpOnly:true, // disallow JS approchable cookie
-                  // secure: true, // session is transfered in https environment, only
-                  cookie: { maxAge: 10 * 60 * 1000 },
-                  resave: false, //overrride existing login session
-                  saveUninitialized: false ,
-                  store:new FileStore(),
-                  // cookie: {	//session
-                  //   httpOnly: true,
-                  //   secure: true
-                  // }
-                })); // put empty value when there is no session?
+app.use(
+  session({
+    secret: "SECRET_CODE",
+    // httpOnly:true, // disallow JS approchable cookie
+    // secure: true, // session is transfered in https environment, only
+    cookie: { maxAge: 10 * 60 * 1000 },
+    resave: false, //overrride existing login session
+    saveUninitialized: false,
+    store: new FileStore(),
+    // cookie: {	//session
+    //   httpOnly: true,
+    //   secure: true
+    // }
+  })
+); // put empty value when there is no session?
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 // routers
 // add like middlewares that are routers
 // to handle endpoints
 const homepage = require("./routes/homepage");
 //app.use("/homepage", homepage);
-app.get('/{1}', (req, res)=>{
+app.get("/{1}", (req, res) => {
   //res.send("you are at the init page")
-  res.redirect('/homepage');
-})
+  res.redirect("/homepage");
+});
 app.use("/homepage", homepage);
 const login = require("./routes/login");
 app.use("/login", login(app, passport));
 const map = require("./routes/map");
 app.use("/map", map);
 
-
 // check live server by console log
-app.listen(PORT, err => {
+app.listen(PORT, (err) => {
   console.log("Listening on", PORT);
-  if(err){
-      return console.log("ERROR", err);
-    }
+  if (err) {
+    return console.log("ERROR", err);
   }
-  );
+});
 
 module.exports = app;

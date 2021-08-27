@@ -1,293 +1,244 @@
 <!DOCTYPE html>
 <!--<html lang="ko">-->
-<html> 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Touch2Eat - map page</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css" />
     <style>
 
-        * {
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            box-sizing: border-box;
-        }
-        body {
-            display: flex;
-            /*justify-content: center;*/
-            /*align-items: center;*/
-            min-height: 98vh;
-            /* font-family: 'Roboto Condensed', sans-serif; */
-            font-family: 'M PLUS Rounded 1c', sans-serif;
-            
-        }
-        
-        .col{
-            display: -webkit-flex;
-            display: flex;
-            flex-direction:column;
-            background-color: black;
-        }
+      * {
+          font-family: 'M PLUS Rounded 1c', sans-serif;
+          box-sizing: border-box;
+      }
+      body {
+          display: flex;
+          /*justify-content: center;*/
+          /*align-items: center;*/
+          min-height: 98vh;
+          /* font-family: 'Roboto Condensed', sans-serif; */
+          font-family: 'M PLUS Rounded 1c', sans-serif;
+
+      }
+
+      .col{
+          display: -webkit-flex;
+          display: flex;
+          flex-direction:column;
+          background-color: black;
+      }
 
 
-        /*.split {
-            height: 100%;
-            width: 100%;
-            position: fixed;
-            /* z-index: 1; */
-            top: 0;
-            overflow-x: hidden;
-            padding-top: 20px;
-        }*/
+      /*.split {
+          height: 100%;
+          width: 100%;
+          position: fixed;
+          /* z-index: 1; */
+          top: 0;
+          overflow-x: hidden;
+          padding-top: 20px;
+      }*/
 
-        /* Control the left side */
-        .split.up {
-            /* left: 0; */
-            /* top: 0%; */
-            height:100px;
-            background-color: #111;
-            -webkit-flex: 2;
-            -ms-flex: 2;
-            flex: 2;
-        }
+      /* Control the left side */
+      .split.up {
+          /* left: 0; */
+          /* top: 0%; */
+          height:100px;
+          background-color: #111;
+          -webkit-flex: 2;
+          -ms-flex: 2;
+          flex: 2;
+      }
 
-        /* Control the right side */
-        .split.down {
-            /* right: 0; */
-            /*top: 20%;*/
-            background-color: rgb(173, 153, 153);
-            -webkit-flex: 8;
-            -ms-flex: 8;
-            flex: 8;
-        }
+      /* Control the right side */
+      .split.down {
+          /* right: 0; */
+          /*top: 20%;*/
+          background-color: rgb(173, 153, 153);
+          -webkit-flex: 8;
+          -ms-flex: 8;
+          flex: 8;
+      }
 
-        /* If you want the content centered horizontally and vertically */
-        .centered {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+      /* If you want the content centered horizontally and vertically */
+      .centered {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+      }
 
-        #map {
-            border: 2px solid #333;
-            width: 100vw;
-            height: 96vh;
-            mask-image: radial-gradient(#fff, #000);
-        }       
-        /* ############################################### */
+      #map {
+          border: 2px solid #333;
+          width: 100vw;
+          height: 96vh;
+          mask-image: radial-gradient(#fff, #000);
+      }
+      /* ############################################### */
 
-        /* The sidebar menu */
-        .sidebar {
-            height: 100%; /* 100% Full-height */
-            width: 0; /* 0 width - change this with JavaScript */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Stay on top */
-            top: 0;
-            left: 0;
-            background-color: #111; /* Black*/
-            overflow-x: hidden; /* Disable horizontal scroll */
-            padding-top: 60px; /* Place content 60px from the top */
-            transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
-        }
+      /* The sidebar menu */
+      .sidebar {
+          height: 100%; /* 100% Full-height */
+          width: 0; /* 0 width - change this with JavaScript */
+          position: fixed; /* Stay in place */
+          z-index: 1; /* Stay on top */
+          top: 0;
+          left: 0;
+          background-color: #111; /* Black*/
+          overflow-x: hidden; /* Disable horizontal scroll */
+          padding-top: 60px; /* Place content 60px from the top */
+          transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+      }
 
-        /* The sidebar links */
-        .sidebar a {
-            padding: 8px 8px 8px 15px;
-            text-decoration: none;
-            font-size: 20px;
-            color: #818181;
-            display: block;
-            transition: 0.1s;
-        }
+      /* The sidebar links */
+      .sidebar a {
+          padding: 8px 8px 8px 15px;
+          text-decoration: none;
+          font-size: 20px;
+          color: #818181;
+          display: block;
+          transition: 0.1s;
+      }
 
-        /* When you mouse over the navigation links, change their color */
-        .sidebar a:hover {
-            color: #f1f1f1;
-        }
+      /* When you mouse over the navigation links, change their color */
+      .sidebar a:hover {
+          color: #f1f1f1;
+      }
 
-        .sidebar a table{
-            padding: 4px 4px 4px 8px;
-            text-decoration: none;
-            font-size: 10px;
-            color: #818181;
-        }
-        .sidebar a table tr:hover{
-            color: #c23a3a;
-        }
+      .sidebar a table{
+          padding: 4px 4px 4px 8px;
+          text-decoration: none;
+          font-size: 10px;
+          color: #818181;
+      }
+      .sidebar a table tr:hover{
+          color: #c23a3a;
+      }
 
-        /* Position and style the close button (top right corner) */
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
+      /* Position and style the close button (top right corner) */
+      .sidebar .closebtn {
+          position: absolute;
+          top: 0;
+          right: 25px;
+          font-size: 36px;
+          margin-left: 50px;
+      }
 
-        /* The button used to open the sidebar */
-        .openbtn {
-            font-size: 20px;
-            cursor: pointer;
-            background-color: #111;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-        }
+      /* The button used to open the sidebar */
+      .openbtn {
+          font-size: 20px;
+          cursor: pointer;
+          background-color: #111;
+          color: white;
+          padding: 10px 15px;
+          border: none;
+      }
 
-        .openbtn:hover {
-            background-color: #444;
-        }
+      .openbtn:hover {
+          background-color: #444;
+      }
 
-        /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
-        #main {
-            transition: margin-left .5s; /* If you want a transition effect */
-            padding: 5px;
-        }
+      /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+      #main {
+          transition: margin-left .5s; /* If you want a transition effect */
+          padding: 5px;
+      }
 
-        /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-        @media screen and (max-height: 450px) {
-            .sidebar {padding-top: 15px;}
-            .sidebar a {font-size: 18px;}
-        }
+      /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+      @media screen and (max-height: 450px) {
+          .sidebar {padding-top: 15px;}
+          .sidebar a {font-size: 18px;}
+      }
 
-        .vanillabutton {
-            /* display: block; */
-            width: 120px;
-            border: none;
-            background-color:midnightblue;
-            color:rgb(241, 238, 238);
-            padding: 5px 5px;
-            font-size: 12px;
-            cursor: pointer;
-            text-align: center;
-        }
+      .vanillabutton {
+          /* display: block; */
+          width: 120px;
+          border: none;
+          background-color:midnightblue;
+          color:rgb(241, 238, 238);
+          padding: 5px 5px;
+          font-size: 12px;
+          cursor: pointer;
+          text-align: center;
+      }
 
-        .vanillabutton:hover {
-            /* display: block; */
-            background-color:rgb(197, 118, 28);
-            color:rgb(14, 2, 2);
-        }
-        
-        #myTravelMethod{
-            width: 120px;
-        }
+      .vanillabutton:hover {
+          /* display: block; */
+          background-color:rgb(197, 118, 28);
+          color:rgb(14, 2, 2);
+      }
 
-        /* .dropbtn {
-        background-color: #ea2129;
-        color: white;
-        padding: 16px;
-        font-size: 16px;
-        border: none;
-        }
-        #myTravelMethod {
-        display: none;
-        position: absolute;
-        background-color: #f1f1f1;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-        }
-
-
-        .dropdown-content a {
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        } */
-
+      #myTravelMethod{
+          width: 120px;
+      }
     </style>
-    
-</head>
-<body>
+  </head>
+  <body>
+    <!-- Load icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
-<!-- Load icon library -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <div class="col">
+      <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a id="SimpleFilter" href="#">Suggetsions filtered</a>
+      </div>
 
-    
-<div class="col">
-<div id="mySidebar" class="sidebar">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <a id="SimpleFilter" href="#">Suggetsions filtered</a>
-</div>
-
-    <div class="split up">
+      <div class="split up">
         <div id="main">
-            <button class="openbtn" onclick="openNav()">&#9776; Search Results</button>
-            <button id="homebutton" onclick="location.href = '/homepage'">
-                <img src="/images/homebutton.png" type="png", width="12", height="12">
-            </img></button>
-            
-            <!--<form action="javascript:void(0);">-->
-            <p id="submit_form">
-                <button class="vanillabutton" id="nowbutton">Current Location</button>
-                <input id="nowsearchtext" type="text" placeholder="Search place..." name="search place">
-                <button id="nowsearchbutton" type="submit"><i class="fa fa-search"></i></button>
-            </p>
-            <p>
-                <button class="vanillabutton" id="routebutton" >Search Route</button>
-                <!-- <input id="searchlocationbutton" type="text" placeholder="Type location..." name="search location"> -->
-                <!-- <button id="locationsearchbutton" type="submit"><i class="fa fa-search"></i></button>              -->
-            </p>
-            <p>
+          <button class="openbtn" onclick="openNav()">&#9776; Search Results</button>
+          <button id="homebutton" onclick="location.href = '/homepage'">
+            <img src="/images/homebutton.png" type="png" , width="12" , height="12" />
+          </button>
 
-                <div class="custom-select" style="width:200px;" >
-                    <select id="myTravelMethod">
-                      <option value="0">Public Transport</option>
-                      <option value="1">Driving</option>
-                      <option value="2">Walking</option>
-                    </select>
-                  </div>
-                <!-- <button class="dropbtn" onmouseover="openDrop()" onmouseout="closeDrop()">Travel method</button>
-                <div id="myTravelMethod" class="dropdown">
-                    <a href="#">PublicTransport</a>
-                    <a href="#">Driving</a>
-                    <a href="#">Walking</a>
-                </div> -->
-                <!-- <div class="select" id="myTravelMethod"> -->
-                <!-- <div id="myTravelMethod" class="select is-small">
-                    <select>
-                      <option value="PublicTransport">Public Transport</option>
-                      <option value="Driving">Driving</option>
-                      <option value="Walking">Walking</option>
-                    </select>
-                </div> -->
-            </p>
+          <!--<form action="javascript:void(0);">-->
+          <p id="submit_form">
+            <button class="vanillabutton" id="nowbutton">Current Location</button>
+            <input id="nowsearchtext" type="text" placeholder="Search place..." name="search place" />
+            <button id="nowsearchbutton" type="submit"><i class="fa fa-search"></i></button>
+          </p>
+
+          <p>
+            <button class="vanillabutton" id="routebutton">Search Route</button>
+          </p>
+
+          <div>
+            <div class="custom-select" style="width: 200px">
+              <select id="myTravelMethod">
+                <option value="0">Public Transport</option>
+                <option value="1">Driving</option>
+                <option value="2">Walking</option>
+              </select>
+            </div>
+          </div>
         </div>
-    </div>
-      
-    <div class="split down" class="centered">
+      </div>
+
+      <div class="split down" class="centered">
         <div id="map"></div>
+      </div>
     </div>
-</div>     
 
     <script>
-        /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
-        function openNav() {
+      /* Set the width of the sidebar to 250px and the left margin of the page content to 250px */
+      function openNav() {
         document.getElementById("mySidebar").style.width = "250px";
         document.getElementById("main").style.marginLeft = "250px";
-        }
+      }
 
-        /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
-        function closeNav() {
+      /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
+      function closeNav() {
         document.getElementById("mySidebar").style.width = "0";
         document.getElementById("main").style.marginLeft = "0";
-        }
+      }
 
+      function openDrop() {}
 
-        function openDrop() {
-
-        }
-
-        function closeDrop() {
-
-        }
-
+      function closeDrop() {}
     </script>
-    
+
     <script id="needme" gk="<%- googlemapkey %>"></script>
     <script id="needplacetosearch" gk="<%- placeToSearch %>"></script>
-    <script defer src="/src/map_op.js" type="text/javascript" ></script>
-
-</body>
+    <script defer src="/src/map_op.js" type="text/javascript"></script>
+  </body>
 </html>

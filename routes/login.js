@@ -8,30 +8,29 @@ const authenticateUser = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
   } else {
-    console.log('fail-redirected-1')
-    return res.render('wait.html',{info_disp: "You are not an authenticaed user, please retry logging in...", redirect:"/homepage"});
+    console.log("fail-redirected-1");
+    return res.render("wait.html", {
+      info_disp: "You are not an authenticaed user, please retry logging in...",
+      redirect: "/homepage",
+    });
   }
 };
 
-
-module.exports = function(app, passport) {
-
+module.exports = function (app, passport) {
   const express = require("express");
   const router = express.Router();
 
-  router.use(function(req, res, next){
-    console.log("Router - login : ",req.url, "@", Date.now());
+  router.use(function (req, res, next) {
+    console.log("Router - login : ", req.url, "@", Date.now());
     next();
   });
 
-  router
-    .route('/')
-    .get((req, res, next) => {
-      console.log('r-1');
-      res.redirect('/login/checkAuth');
-      //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/google"});
-      //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/loginpage"});
-    });
+  router.route("/").get((req, res, next) => {
+    console.log("r-1");
+    res.redirect("/login/checkAuth");
+    //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/google"});
+    //return res.render('wait.html', {info_disp: `Now taking you to google login...`, redirect:"/login/loginpage"});
+  });
 
   // router
   //   .route('/loginpage')
@@ -39,69 +38,60 @@ module.exports = function(app, passport) {
   //     return res.render('login.html');
   //   });
 
-  router
-    .route('/checkAuth')
-    .get( (req, res, next) =>{
-      if(req.isAuthenticated()){
-        console.log('client is already logged in!');
-        return res.render('wait.html', {info_disp: `You have already logged in, user ${req.user.displayName}!!`, redirect:"/homepage"});
-      }else{
-        console.log('taking the client to the login page!');
-        res.redirect('/login/google');
-        return ; 
-      }
-    });
+  router.route("/checkAuth").get((req, res, next) => {
+    if (req.isAuthenticated()) {
+      console.log("client is already logged in!");
+      return res.render("wait.html", {
+        info_disp: `You have already logged in, user ${req.user.displayName}!!`,
+        redirect: "/homepage",
+      });
+    } else {
+      console.log("taking the client to the login page!");
+      res.redirect("/login/google");
+      return;
+    }
+  });
 
-  router
-    .route('/google')
-    .get(passport.authenticate('google', { scope: ['profile'] }));
+  router.route("/google").get(passport.authenticate("google", { scope: ["profile"] }));
 
-  router
-    .route('/google/callback')
-    .get(
-      passport.authenticate('google', {
-      failureRedirect: '/login/fail/',
-      successRedirect: '/login/success/'}))
+  router.route("/google/callback").get(
+    passport.authenticate("google", {
+      failureRedirect: "/login/fail/",
+      successRedirect: "/login/success/",
+    })
+  );
 
+  router.route("/fail").get((req, res, next) => {
+    return res.render("wait.html", { info_disp: "You have failed to log in...", redirect: "/homepage" });
+  });
 
-  router
-    .route('/fail')
-    .get((req, res, next)=>{
+  router.route("/success").get(authenticateUser, (req, res, next) => {
+    return res.render("wait.html", { info_disp: `Welcome user ${req.user.displayName}!!`, redirect: "/homepage" });
+  });
 
-      return res.render('wait.html',{info_disp: "You have failed to log in...", redirect:"/homepage"});
-    });
+  router.route("/logout").get((req, res) => {
+    if (req.isAuthenticated()) {
+      // session exists
+      console.log("your session exists");
+      let name = req.user.displayName;
 
-  router
-    .route('/success')
-    .get( authenticateUser, (req, res, next)=>{
-
-      return res.render('wait.html', {info_disp: `Welcome user ${req.user.displayName}!!`, redirect:"/homepage"});
-    });
-
-  router
-    .route('/logout')
-    .get((req, res) => {
-        if(req.isAuthenticated()){ // session exists
-          console.log("your session exists");
-          let name = req.user.displayName;
-
-          // remove session
-          req.session.destroy(err => {
-            if(err) throw err;
-            try{
-              req.session = null;
-              req.logout();
-            } catch(error){
-              console.error(error);
-            }
-          })
-
-          return res.render('wait.html', {info_disp: `User ${name} is logged out!`, redirect:"/homepage"});
-        }else{
-          console.log("your session does not exist");
-          return res.render('wait.html', {info_disp: `You havent logged in yet!`, redirect:"/homepage"});
+      // remove session
+      req.session.destroy((err) => {
+        if (err) throw err;
+        try {
+          req.session = null;
+          req.logout();
+        } catch (error) {
+          console.error(error);
         }
       });
-  
+
+      return res.render("wait.html", { info_disp: `User ${name} is logged out!`, redirect: "/homepage" });
+    } else {
+      console.log("your session does not exist");
+      return res.render("wait.html", { info_disp: `You havent logged in yet!`, redirect: "/homepage" });
+    }
+  });
+
   return router;
-}
+};
